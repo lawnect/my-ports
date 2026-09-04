@@ -17,6 +17,24 @@ make run
 
 `make run` launches the app as an accessory app. It does not create a normal window.
 
+### Xcode
+
+Open the direct-distribution macOS app project:
+
+```sh
+open MyPorts.xcodeproj
+```
+
+Select the `My Ports` scheme and `My Mac`, then use Run or Test normally. The
+project keeps App Sandbox disabled because the app needs to inspect and terminate
+local processes, and enables Hardened Runtime for Developer ID distribution.
+
+Before creating a distributable archive, select the `My Ports` target, open
+Signing & Capabilities, choose your Apple Developer team, and confirm the bundle
+identifier. Then choose Product > Archive and, in Organizer, use Distribute App >
+Developer ID. Xcode can upload the archive for notarization and export the signed
+app.
+
 ## App Bundle
 
 ```sh

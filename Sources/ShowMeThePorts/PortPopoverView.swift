@@ -248,11 +248,17 @@ private struct ServiceIconView: View {
             return nil
         }
 
-        let iconURL = Bundle.module.url(
+        #if SWIFT_PACKAGE
+        let resourceBundle = Bundle.module
+        #else
+        let resourceBundle = Bundle.main
+        #endif
+
+        let iconURL = resourceBundle.url(
             forResource: iconName,
             withExtension: "svg",
             subdirectory: "ServiceIcons"
-        ) ?? Bundle.module.url(forResource: iconName, withExtension: "svg")
+        ) ?? resourceBundle.url(forResource: iconName, withExtension: "svg")
 
         guard let iconURL else {
             return nil

@@ -22,8 +22,15 @@ struct PortPopoverView: View {
 
     private var header: some View {
         HStack(spacing: 10) {
-            Label("My Ports", systemImage: "network")
-                .font(.headline)
+            HStack(spacing: 6) {
+                Image(nsImage: MenuBarIcon.image)
+                    .resizable()
+                    .frame(width: 18, height: 18)
+                    .accessibilityHidden(true)
+
+                Text(L10n.appName)
+                    .font(.headline)
+            }
 
             Spacer()
 
@@ -36,57 +43,32 @@ struct PortPopoverView: View {
             }
             .buttonStyle(.borderless)
             .disabled(viewModel.isLoading)
-            .help("Refresh")
+            .help(L10n.refresh)
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
     }
 
     private var filterBar: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 8) {
-                Text("Filter")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .frame(width: 42, alignment: .leading)
-
-                Spacer(minLength: 0)
-
-                Picker("Filter", selection: $viewModel.filterMode) {
-                    ForEach(PortFilterMode.allCases) { mode in
-                        Text(mode.rawValue).tag(mode)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .controlSize(.small)
-                .fixedSize(horizontal: true, vertical: false)
-            }
-
-            HStack(spacing: 8) {
-                Image(systemName: "magnifyingglass")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .frame(width: 42, alignment: .leading)
-
-                TextField("Port", text: $viewModel.portSearchText)
-                    .font(.system(.body, design: .monospaced))
-                    .textFieldStyle(.roundedBorder)
-
-                if !viewModel.portSearchText.isEmpty {
-                    Button {
-                        viewModel.portSearchText = ""
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                    }
-                    .buttonStyle(.borderless)
-                    .foregroundStyle(.secondary)
-                    .help("Clear")
+        VStack(spacing: 10) {
+            Picker(L10n.filter, selection: $viewModel.filterMode) {
+                ForEach(PortFilterMode.allCases) { mode in
+                    Text(mode.displayName).tag(mode)
                 }
             }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .controlSize(.small)
+            .frame(maxWidth: .infinity)
+
+            PortSearchField(
+                text: $viewModel.portSearchText,
+                placeholder: L10n.port
+            )
+            .frame(height: 26)
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 8)
+        .padding(.vertical, 10)
     }
 
     @ViewBuilder
@@ -102,7 +84,7 @@ struct PortPopoverView: View {
                         .foregroundStyle(.secondary)
                 }
 
-                Text(viewModel.isLoading ? "Looking for listening ports..." : viewModel.emptyStateMessage)
+                Text(viewModel.isLoading ? L10n.lookingForPorts : viewModel.emptyStateMessage)
                     .font(.callout)
                     .foregroundStyle(.secondary)
             }
@@ -146,11 +128,53 @@ struct PortPopoverView: View {
 
             Spacer()
 
-            Button("Quit", role: .destructive, action: onQuit)
+            Button(L10n.quit, role: .destructive, action: onQuit)
                 .keyboardShortcut("q")
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
+    }
+}
+
+private struct PortSearchField: NSViewRepresentable {
+    @Binding var text: String
+    let placeholder: String
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(text: $text)
+    }
+
+    func makeNSView(context: Context) -> NSSearchField {
+        let searchField = NSSearchField()
+        searchField.placeholderString = placeholder
+        searchField.sendsSearchStringImmediately = true
+        searchField.delegate = context.coordinator
+        return searchField
+    }
+
+    func updateNSView(_ searchField: NSSearchField, context: Context) {
+        context.coordinator.text = $text
+        searchField.placeholderString = placeholder
+
+        if searchField.stringValue != text {
+            searchField.stringValue = text
+        }
+    }
+
+    final class Coordinator: NSObject, NSSearchFieldDelegate {
+        var text: Binding<String>
+
+        init(text: Binding<String>) {
+            self.text = text
+        }
+
+        func controlTextDidChange(_ notification: Notification) {
+            guard let searchField = notification.object as? NSSearchField else {
+                return
+            }
+
+            text.wrappedValue = searchField.stringValue
+        }
     }
 }
 
@@ -178,25 +202,25 @@ private struct PortRowView: View {
                 }
 
                 HStack(spacing: 5) {
-                    Text(entry.processName)
+                    Text(L10n.localizedProcessName(entry.processName))
                         .font(.subheadline)
                         .lineLimit(1)
 
                     Text("·")
                         .foregroundStyle(.tertiary)
 
-                    Text(classification.displayName)
+                    Text(L10n.classificationName(classification.displayName))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
-                        .help(classification.reason)
+                        .help(L10n.classificationReason(classification.reason))
                 }
             }
 
             Spacer(minLength: 12)
 
             VStack(alignment: .trailing, spacing: 4) {
-                Text("PID \(entry.pid)")
+                Text(L10n.pid(entry.pid))
                     .font(.system(.caption, design: .monospaced))
                     .foregroundStyle(.secondary)
 
@@ -216,7 +240,7 @@ private struct PortRowView: View {
             }
             .buttonStyle(.borderless)
             .disabled(isKilling)
-            .help("Kill \(entry.processName) (\(entry.pid))")
+            .help(L10n.killHelp(processName: entry.processName, pid: entry.pid))
         }
         .padding(.vertical, 4)
     }
@@ -240,7 +264,7 @@ private struct ServiceIconView: View {
         }
         .frame(width: 22, height: 22)
         .accessibilityHidden(true)
-        .help(classification.reason)
+        .help(L10n.classificationReason(classification.reason))
     }
 
     private var brandImage: NSImage? {
@@ -248,17 +272,11 @@ private struct ServiceIconView: View {
             return nil
         }
 
-        #if SWIFT_PACKAGE
-        let resourceBundle = Bundle.module
-        #else
-        let resourceBundle = Bundle.main
-        #endif
-
-        let iconURL = resourceBundle.url(
+        let iconURL = AppResources.bundle.url(
             forResource: iconName,
             withExtension: "svg",
             subdirectory: "ServiceIcons"
-        ) ?? resourceBundle.url(forResource: iconName, withExtension: "svg")
+        ) ?? AppResources.bundle.url(forResource: iconName, withExtension: "svg")
 
         guard let iconURL else {
             return nil

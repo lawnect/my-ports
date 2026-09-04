@@ -1,12 +1,16 @@
 import Foundation
 import ShowMeThePortsCore
 
-enum PortFilterMode: String, CaseIterable, Identifiable {
-    case web = "Web"
-    case development = "Dev"
-    case all = "All"
+enum PortFilterMode: CaseIterable, Identifiable {
+    case web
+    case development
+    case all
 
     var id: Self { self }
+
+    var displayName: String {
+        L10n.filterName(self)
+    }
 }
 
 @MainActor
@@ -41,62 +45,71 @@ final class PortListViewModel: ObservableObject {
 
     var footerStatus: String {
         if isLoading {
-            return "Refreshing..."
+            return L10n.refreshing
         }
 
         guard let lastUpdated else {
-            return "Not refreshed yet"
+            return L10n.notRefreshed
         }
 
-        let updatedText = "Updated \(lastUpdated.formatted(date: .omitted, time: .standard))"
+        let updatedText = L10n.updated(
+            at: lastUpdated.formatted(date: .omitted, time: .standard)
+        )
         let searchText = normalizedPortSearchText
+        let detail: String
 
         switch filterMode {
         case .web:
             let hiddenCount = max(allPorts.count - ports.count, 0)
 
             if !searchText.isEmpty {
-                return "\(updatedText) · \(ports.count) web matches"
+                detail = L10n.format("status.web_matches", Int64(ports.count))
+            } else if hiddenCount == 0 {
+                detail = L10n.format("status.web_count", Int64(ports.count))
+            } else {
+                detail = L10n.format(
+                    "status.web_hidden",
+                    Int64(ports.count),
+                    Int64(hiddenCount)
+                )
             }
-
-            if hiddenCount == 0 {
-                return "\(updatedText) · \(ports.count) web"
-            }
-
-            return "\(updatedText) · \(ports.count) web · \(hiddenCount) hidden"
         case .development:
             let hiddenCount = max(allPorts.count - ports.count, 0)
 
             if !searchText.isEmpty {
-                return "\(updatedText) · \(ports.count) dev matches"
+                detail = L10n.format("status.development_matches", Int64(ports.count))
+            } else if hiddenCount == 0 {
+                detail = L10n.format("status.development_count", Int64(ports.count))
+            } else {
+                detail = L10n.format(
+                    "status.development_hidden",
+                    Int64(ports.count),
+                    Int64(hiddenCount)
+                )
             }
-
-            if hiddenCount == 0 {
-                return "\(updatedText) · \(ports.count) dev"
-            }
-
-            return "\(updatedText) · \(ports.count) dev · \(hiddenCount) hidden"
         case .all:
             if !searchText.isEmpty {
-                return "\(updatedText) · \(ports.count) matches"
+                detail = L10n.format("status.all_matches", Int64(ports.count))
+            } else {
+                detail = L10n.format("status.all_total", Int64(allPorts.count))
             }
-
-            return "\(updatedText) · \(allPorts.count) total"
         }
+
+        return "\(updatedText) · \(detail)"
     }
 
     var emptyStateMessage: String {
         if !normalizedPortSearchText.isEmpty {
-            return "No matching ports"
+            return L10n.noMatchingPorts
         }
 
         switch filterMode {
         case .web:
-            return "No web ports"
+            return L10n.noWebPorts
         case .development:
-            return "No development ports"
+            return L10n.noDevelopmentPorts
         case .all:
-            return "No listening ports"
+            return L10n.noListeningPorts
         }
     }
 

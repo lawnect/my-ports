@@ -28,11 +28,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
             return
         }
 
-        let image = NSImage(systemSymbolName: "network", accessibilityDescription: "My Ports")
-        image?.isTemplate = true
-
-        button.image = image
-        button.toolTip = "My Ports"
+        button.image = MenuBarIcon.image
+        button.toolTip = L10n.appName
+        button.setAccessibilityLabel(L10n.appName)
         button.target = self
         button.action = #selector(togglePopover(_:))
     }

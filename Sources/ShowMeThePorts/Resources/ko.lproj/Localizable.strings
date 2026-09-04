@@ -1,4 +1,4 @@
-"app.name" = "내 포트";
+"app.name" = "My Ports";
 "action.refresh" = "새로 고침";
 "action.clear" = "지우기";
 "action.quit" = "종료";
@@ -19,7 +19,6 @@
 "status.development_count" = "개발 %lld개";
 "status.development_hidden" = "개발 %lld개 · 숨김 %lld개";
 "status.all_matches" = "일치 %lld개";
-"status.all_total" = "전체 %lld개";
 "empty.no_matches" = "일치하는 포트 없음";
 "empty.no_web_ports" = "웹 포트 없음";
 "empty.no_development_ports" = "개발 포트 없음";
@@ -98,3 +97,12 @@
 "classification.reason.recognized_development_process" = "인식된 개발 프로세스: %@";
 "classification.reason.rust_target_executable" = "Rust 타깃 실행 파일: %@";
 "classification.reason.executable" = "실행 파일: %@";
+"setting.launch_at_login" = "로그인 시 자동 실행";
+"status.launch_at_login_requires_approval" = "시스템 설정 > 일반 > 로그인 항목에서 My Ports를 허용하세요.";
+"error.launch_at_login" = "로그인 시 자동 실행을 변경하지 못했습니다: %@";
+"action.settings" = "설정";
+"action.cancel" = "취소";
+"action.terminate" = "종료";
+"confirmation.kill.title" = "프로세스를 종료할까요?";
+"confirmation.kill.message" = "%@ (PID %lld), 포트 %lld에서 수신 대기 중인 프로세스를 정말 종료하시겠습니까?";
+"search.placeholder" = "포트, 서비스 또는 주소 검색";

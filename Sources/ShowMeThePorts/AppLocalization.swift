@@ -13,8 +13,12 @@ enum AppResources {
 enum L10n {
     static var appName: String { string("app.name") }
     static var refresh: String { string("action.refresh") }
+    static var settings: String { string("action.settings") }
+    static var cancel: String { string("action.cancel") }
+    static var terminate: String { string("action.terminate") }
     static var filter: String { string("label.filter") }
     static var port: String { string("label.port") }
+    static var searchPlaceholder: String { string("search.placeholder") }
     static var clear: String { string("action.clear") }
     static var lookingForPorts: String { string("status.looking_for_ports") }
     static var quit: String { string("action.quit") }
@@ -24,6 +28,11 @@ enum L10n {
     static var noWebPorts: String { string("empty.no_web_ports") }
     static var noDevelopmentPorts: String { string("empty.no_development_ports") }
     static var noListeningPorts: String { string("empty.no_listening_ports") }
+    static var launchAtLogin: String { string("setting.launch_at_login") }
+    static var launchAtLoginRequiresApproval: String {
+        string("status.launch_at_login_requires_approval")
+    }
+    static var terminateProcessTitle: String { string("confirmation.kill.title") }
 
     static func filterName(_ mode: PortFilterMode) -> String {
         switch mode {
@@ -43,6 +52,23 @@ enum L10n {
 
     static func killHelp(processName: String, pid: Int32) -> String {
         format("action.kill_process", localizedProcessName(processName), Int64(pid))
+    }
+
+    static func launchAtLoginError(_ message: String) -> String {
+        format("error.launch_at_login", message)
+    }
+
+    static func terminateProcessMessage(
+        processName: String,
+        pid: Int32,
+        port: Int
+    ) -> String {
+        format(
+            "confirmation.kill.message",
+            localizedProcessName(processName),
+            Int64(pid),
+            Int64(port)
+        )
     }
 
     static func localizedProcessName(_ processName: String) -> String {

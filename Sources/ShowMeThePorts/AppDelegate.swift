@@ -7,6 +7,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     private let viewModel = PortListViewModel()
     private var statusItem: NSStatusItem?
     private let popover = NSPopover()
+    private var autoRefreshTask: Task<Void, Never>?
 
     func applicationWillFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -15,10 +16,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         configureStatusItem()
         configurePopover()
+        startAutoRefresh()
+    }
 
-        Task {
-            await viewModel.refresh()
-        }
+    func applicationWillTerminate(_ notification: Notification) {
+        autoRefreshTask?.cancel()
     }
 
     private func configureStatusItem() {
@@ -45,6 +47,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
                 onQuit: { NSApp.terminate(nil) }
             )
         )
+    }
+
+    private func startAutoRefresh() {
+        autoRefreshTask?.cancel()
+        autoRefreshTask = Task { [weak self] in
+            while !Task.isCancelled {
+                guard let self else {
+                    return
+                }
+
+                await self.viewModel.refresh()
+
+                do {
+                    try await Task.sleep(for: .seconds(3))
+                } catch {
+                    return
+                }
+            }
+        }
     }
 
     @objc private func togglePopover(_ sender: Any?) {

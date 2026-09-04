@@ -4,12 +4,12 @@ import ShowMeThePortsCore
 
 struct PortPopoverView: View {
     @ObservedObject var viewModel: PortListViewModel
+    @StateObject private var launchAtLogin = LaunchAtLoginController()
     let onQuit: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
             header
-            Divider()
             searchBar
             Divider()
             content
@@ -18,6 +18,9 @@ struct PortPopoverView: View {
             footer
         }
         .frame(width: 420, height: 488)
+        .onAppear {
+            launchAtLogin.refreshStatus()
+        }
     }
 
     private var header: some View {
@@ -47,18 +50,32 @@ struct PortPopoverView: View {
 
                 Spacer(minLength: 8)
 
-                Button {
-                    Task {
-                        await viewModel.refresh()
-                    }
+                Menu {
+                    Toggle(
+                        L10n.launchAtLogin,
+                        isOn: Binding(
+                            get: { launchAtLogin.isEnabled },
+                            set: { isEnabled in
+                                launchAtLogin.setEnabled(isEnabled)
+                            }
+                        )
+                    )
+
+                    Divider()
+
+                    Button(L10n.quit, role: .destructive, action: onQuit)
+                        .keyboardShortcut("q")
                 } label: {
-                    Image(systemName: "arrow.clockwise")
+                    Label(L10n.settings, systemImage: "gearshape")
+                        .labelStyle(.iconOnly)
                 }
-                .buttonStyle(.borderless)
-                .disabled(viewModel.isLoading)
-                .help(L10n.refresh)
+                .menuStyle(.borderlessButton)
+                .menuIndicator(.hidden)
+                .fixedSize()
+                .help(L10n.settings)
             }
         }
+        .frame(maxWidth: .infinity)
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
     }
@@ -66,7 +83,7 @@ struct PortPopoverView: View {
     private var searchBar: some View {
         PortSearchField(
             text: $viewModel.portSearchText,
-            placeholder: L10n.port
+            placeholder: L10n.searchPlaceholder
         )
         .frame(height: 26)
         .padding(.horizontal, 14)
@@ -109,7 +126,7 @@ struct PortPopoverView: View {
 
     @ViewBuilder
     private var errorFooter: some View {
-        if let errorMessage = viewModel.errorMessage {
+        if let errorMessage = viewModel.errorMessage ?? launchAtLogin.errorMessage {
             Divider()
 
             Label(errorMessage, systemImage: "exclamationmark.triangle")
@@ -124,14 +141,22 @@ struct PortPopoverView: View {
 
     private var footer: some View {
         HStack(spacing: 10) {
+            Button {
+                Task {
+                    await viewModel.refresh()
+                }
+            } label: {
+                Image(systemName: "arrow.clockwise")
+            }
+            .buttonStyle(.borderless)
+            .disabled(viewModel.isLoading)
+            .help(L10n.refresh)
+
             Text(viewModel.footerStatus)
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
             Spacer()
-
-            Button(L10n.quit, role: .destructive, action: onQuit)
-                .keyboardShortcut("q")
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
@@ -184,6 +209,7 @@ private struct PortRowView: View {
     let entry: PortEntry
     let isKilling: Bool
     let onKill: () -> Void
+    @State private var isShowingKillConfirmation = false
 
     private var classification: PortClassification {
         entry.classification
@@ -232,7 +258,9 @@ private struct PortRowView: View {
                     .lineLimit(1)
             }
 
-            Button(role: .destructive, action: onKill) {
+            Button(role: .destructive) {
+                isShowingKillConfirmation = true
+            } label: {
                 if isKilling {
                     ProgressView()
                         .controlSize(.small)
@@ -245,6 +273,21 @@ private struct PortRowView: View {
             .help(L10n.killHelp(processName: entry.processName, pid: entry.pid))
         }
         .padding(.vertical, 4)
+        .alert(
+            L10n.terminateProcessTitle,
+            isPresented: $isShowingKillConfirmation
+        ) {
+            Button(L10n.cancel, role: .cancel) {}
+            Button(L10n.terminate, role: .destructive, action: onKill)
+        } message: {
+            Text(
+                L10n.terminateProcessMessage(
+                    processName: entry.processName,
+                    pid: entry.pid,
+                    port: entry.port
+                )
+            )
+        }
     }
 }
 

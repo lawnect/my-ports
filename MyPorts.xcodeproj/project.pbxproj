@@ -11,13 +11,14 @@
 		B10000000000000000000002 /* PortListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000002 /* PortListViewModel.swift */; };
 		B10000000000000000000003 /* PortPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000003 /* PortPopoverView.swift */; };
 		B10000000000000000000004 /* ShowMeThePortsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000004 /* ShowMeThePortsApp.swift */; };
-		B10000000000000000000005 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = F30000000000000000000002 /* AppIcon.icns */; };
+		B10000000000000000000005 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 8AD2F63A304ACA59005692DD /* AppIcon.icon */; };
 		B10000000000000000000006 /* Resources/ServiceIcons in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000005 /* Resources/ServiceIcons */; };
 		B10000000000000000000007 /* libShowMeThePortsCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F40000000000000000000002 /* libShowMeThePortsCore.a */; };
 		B10000000000000000000008 /* AppLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000006 /* AppLocalization.swift */; };
 		B10000000000000000000009 /* MenuBarIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000007 /* MenuBarIcon.swift */; };
 		B1000000000000000000000A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = V10000000000000000000001 /* Localizable.strings */; };
 		B1000000000000000000000B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = V10000000000000000000002 /* InfoPlist.strings */; };
+		B1000000000000000000000C /* LaunchAtLoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000008 /* LaunchAtLoginController.swift */; };
 		B20000000000000000000001 /* DevelopmentPortFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000001 /* DevelopmentPortFilter.swift */; };
 		B20000000000000000000002 /* LsofPortScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000002 /* LsofPortScanner.swift */; };
 		B20000000000000000000003 /* PortClassification.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000003 /* PortClassification.swift */; };
@@ -47,6 +48,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8AD2F63A304ACA59005692DD /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		F10000000000000000000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F10000000000000000000002 /* PortListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortListViewModel.swift; sourceTree = "<group>"; };
 		F10000000000000000000003 /* PortPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortPopoverView.swift; sourceTree = "<group>"; };
@@ -54,6 +56,7 @@
 		F10000000000000000000005 /* Resources/ServiceIcons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources/ServiceIcons; sourceTree = "<group>"; };
 		F10000000000000000000006 /* AppLocalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLocalization.swift; sourceTree = "<group>"; };
 		F10000000000000000000007 /* MenuBarIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarIcon.swift; sourceTree = "<group>"; };
+		F10000000000000000000008 /* LaunchAtLoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginController.swift; sourceTree = "<group>"; };
 		F20000000000000000000001 /* DevelopmentPortFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevelopmentPortFilter.swift; sourceTree = "<group>"; };
 		F20000000000000000000002 /* LsofPortScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LsofPortScanner.swift; sourceTree = "<group>"; };
 		F20000000000000000000003 /* PortClassification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortClassification.swift; sourceTree = "<group>"; };
@@ -61,7 +64,6 @@
 		F20000000000000000000005 /* ProcessPortKiller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessPortKiller.swift; sourceTree = "<group>"; };
 		F20000000000000000000006 /* Shell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shell.swift; sourceTree = "<group>"; };
 		F30000000000000000000001 /* Info-Xcode.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Xcode.plist"; sourceTree = "<group>"; };
-		F30000000000000000000002 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
 		F30000000000000000000003 /* DevelopmentPortFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevelopmentPortFilterTests.swift; sourceTree = "<group>"; };
 		F30000000000000000000004 /* LsofPortScannerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LsofPortScannerTests.swift; sourceTree = "<group>"; };
 		F40000000000000000000001 /* My Ports.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "My Ports.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -71,6 +73,22 @@
 		F50000000000000000000002 /* ko */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ko; path = Resources/ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		F50000000000000000000003 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = Resources/en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F50000000000000000000004 /* ko */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ko; path = Resources/ko.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F50000000000000000000005 /* zh-Hans */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "Resources/zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		F50000000000000000000006 /* zh-Hant */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "Resources/zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		F50000000000000000000007 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = Resources/es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		F50000000000000000000008 /* es-419 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = "es-419"; path = "Resources/es-419.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		F50000000000000000000009 /* ja */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ja; path = Resources/ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		F5000000000000000000000A /* ru */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ru; path = Resources/ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		F5000000000000000000000B /* hi */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = hi; path = Resources/hi.lproj/Localizable.strings; sourceTree = "<group>"; };
+		F5000000000000000000000C /* ar */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ar; path = Resources/ar.lproj/Localizable.strings; sourceTree = "<group>"; };
+		F5000000000000000000000D /* zh-Hans */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "Resources/zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		F5000000000000000000000E /* zh-Hant */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "Resources/zh-Hant.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		F5000000000000000000000F /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = Resources/es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F50000000000000000000010 /* es-419 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = "es-419"; path = "Resources/es-419.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		F50000000000000000000011 /* ja */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ja; path = Resources/ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F50000000000000000000012 /* ru */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ru; path = Resources/ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F50000000000000000000013 /* hi */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = hi; path = Resources/hi.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F50000000000000000000014 /* ar */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ar; path = Resources/ar.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,6 +152,7 @@
 			children = (
 				F10000000000000000000006 /* AppLocalization.swift */,
 				F10000000000000000000001 /* AppDelegate.swift */,
+				F10000000000000000000008 /* LaunchAtLoginController.swift */,
 				F10000000000000000000007 /* MenuBarIcon.swift */,
 				F10000000000000000000002 /* PortListViewModel.swift */,
 				F10000000000000000000003 /* PortPopoverView.swift */,
@@ -171,7 +190,7 @@
 			isa = PBXGroup;
 			children = (
 				F30000000000000000000001 /* Info-Xcode.plist */,
-				F30000000000000000000002 /* AppIcon.icns */,
+				8AD2F63A304ACA59005692DD /* AppIcon.icon */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -258,8 +277,16 @@
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				ar,
 				en,
+				es,
+				"es-419",
+				hi,
+				ja,
 				ko,
+				ru,
+				"zh-Hans",
+				"zh-Hant",
 				Base,
 			);
 			mainGroup = D000000000000000000000002;
@@ -279,7 +306,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B10000000000000000000005 /* AppIcon.icns in Resources */,
+				B10000000000000000000005 /* AppIcon.icon in Resources */,
 				B10000000000000000000006 /* Resources/ServiceIcons in Resources */,
 				B1000000000000000000000A /* Localizable.strings in Resources */,
 				B1000000000000000000000B /* InfoPlist.strings in Resources */,
@@ -309,6 +336,7 @@
 			files = (
 				B10000000000000000000008 /* AppLocalization.swift in Sources */,
 				B10000000000000000000001 /* AppDelegate.swift in Sources */,
+				B1000000000000000000000C /* LaunchAtLoginController.swift in Sources */,
 				B10000000000000000000009 /* MenuBarIcon.swift in Sources */,
 				B10000000000000000000002 /* PortListViewModel.swift in Sources */,
 				B10000000000000000000003 /* PortPopoverView.swift in Sources */,
@@ -340,27 +368,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXVariantGroup section */
-		V10000000000000000000001 /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				F50000000000000000000001 /* en */,
-				F50000000000000000000002 /* ko */,
-			);
-			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
-		V10000000000000000000002 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				F50000000000000000000003 /* en */,
-				F50000000000000000000004 /* ko */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin PBXTargetDependency section */
 		D20000000000000000000003 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -373,6 +380,43 @@
 			targetProxy = D20000000000000000000002 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		V10000000000000000000001 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F50000000000000000000001 /* en */,
+				F50000000000000000000002 /* ko */,
+				F50000000000000000000005 /* zh-Hans */,
+				F50000000000000000000006 /* zh-Hant */,
+				F50000000000000000000007 /* es */,
+				F50000000000000000000008 /* es-419 */,
+				F50000000000000000000009 /* ja */,
+				F5000000000000000000000A /* ru */,
+				F5000000000000000000000B /* hi */,
+				F5000000000000000000000C /* ar */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		V10000000000000000000002 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F50000000000000000000003 /* en */,
+				F50000000000000000000004 /* ko */,
+				F5000000000000000000000D /* zh-Hans */,
+				F5000000000000000000000E /* zh-Hant */,
+				F5000000000000000000000F /* es */,
+				F50000000000000000000010 /* es-419 */,
+				F50000000000000000000011 /* ja */,
+				F50000000000000000000012 /* ru */,
+				F50000000000000000000013 /* hi */,
+				F50000000000000000000014 /* ar */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		C100000000000000000000001 /* Debug */ = {
@@ -488,6 +532,8 @@
 		C200000000000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 5;
@@ -511,6 +557,8 @@
 		C200000000000000000000002 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 5;

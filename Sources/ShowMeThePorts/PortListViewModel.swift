@@ -52,7 +52,9 @@ final class PortListViewModel: ObservableObject {
             return filteredPorts
         }
 
-        return filteredPorts.filter { String($0.port).contains(searchText) }
+        return filteredPorts.filter { entry in
+            matchesSearch(entry, query: searchText)
+        }
     }
 
     var availableFilterModes: [PortFilterMode] {
@@ -89,7 +91,7 @@ final class PortListViewModel: ObservableObject {
             at: lastUpdated.formatted(date: .omitted, time: .standard)
         )
         let searchText = normalizedPortSearchText
-        let detail: String
+        let detail: String?
 
         switch filterMode {
         case .web:
@@ -124,8 +126,12 @@ final class PortListViewModel: ObservableObject {
             if !searchText.isEmpty {
                 detail = L10n.format("status.all_matches", Int64(ports.count))
             } else {
-                detail = L10n.format("status.all_total", Int64(allPorts.count))
+                detail = nil
             }
+        }
+
+        guard let detail else {
+            return updatedText
         }
 
         return "\(updatedText) · \(detail)"
@@ -150,9 +156,52 @@ final class PortListViewModel: ObservableObject {
         portSearchText.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
+    private func matchesSearch(_ entry: PortEntry, query: String) -> Bool {
+        let classification = entry.classification
+        var searchableValues = [
+            String(entry.port),
+            String(entry.pid),
+            entry.processName,
+            L10n.localizedProcessName(entry.processName),
+            entry.protocolName,
+            entry.endpoint,
+            classification.displayName,
+            L10n.classificationName(classification.displayName),
+            classification.reason,
+            L10n.classificationReason(classification.reason)
+        ]
+
+        if let parentPID = entry.parentPID {
+            searchableValues.append(String(parentPID))
+        }
+
+        if let userID = entry.userID {
+            searchableValues.append(String(userID))
+        }
+
+        if let executablePath = entry.executablePath {
+            searchableValues.append(executablePath)
+        }
+
+        searchableValues.append(contentsOf: entry.ancestorExecutablePaths)
+        let searchableText = searchableValues.joined(separator: "\n")
+        let terms = query.split(whereSeparator: \.isWhitespace)
+
+        return terms.allSatisfy { term in
+            searchableText.localizedCaseInsensitiveContains(String(term))
+        }
+    }
+
     func refresh() async {
+        guard !isLoading else {
+            return
+        }
+
         isLoading = true
         errorMessage = nil
+        defer {
+            isLoading = false
+        }
 
         do {
             allPorts = try await scanner.listeningPorts()
@@ -166,7 +215,6 @@ final class PortListViewModel: ObservableObject {
             errorMessage = error.localizedDescription
         }
 
-        isLoading = false
     }
 
     func kill(_ entry: PortEntry) async {

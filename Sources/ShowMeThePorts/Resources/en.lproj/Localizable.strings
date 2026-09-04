@@ -19,7 +19,6 @@
 "status.development_count" = "%lld dev";
 "status.development_hidden" = "%lld dev · %lld hidden";
 "status.all_matches" = "%lld matches";
-"status.all_total" = "%lld total";
 "empty.no_matches" = "No matching ports";
 "empty.no_web_ports" = "No web ports";
 "empty.no_development_ports" = "No development ports";
@@ -98,3 +97,12 @@
 "classification.reason.recognized_development_process" = "Recognized development process: %@";
 "classification.reason.rust_target_executable" = "Rust target executable: %@";
 "classification.reason.executable" = "Executable: %@";
+"setting.launch_at_login" = "Launch at Login";
+"status.launch_at_login_requires_approval" = "Allow My Ports in System Settings > General > Login Items.";
+"error.launch_at_login" = "Couldn’t update Launch at Login: %@";
+"action.settings" = "Settings";
+"action.cancel" = "Cancel";
+"action.terminate" = "Terminate";
+"confirmation.kill.title" = "Terminate Process?";
+"confirmation.kill.message" = "Are you sure you want to terminate %@ (PID %lld), listening on port %lld?";
+"search.placeholder" = "Search ports, services, or addresses";

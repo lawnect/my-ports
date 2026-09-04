@@ -146,17 +146,38 @@ struct PortPopoverView: View {
                     await viewModel.refresh()
                 }
             } label: {
-                Image(systemName: "arrow.clockwise")
+                ZStack {
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .controlSize(.small)
+                            .transition(
+                                .scale(scale: 0.65)
+                                    .combined(with: .opacity)
+                            )
+                    } else {
+                        Image(systemName: "arrow.clockwise")
+                            .transition(
+                                .scale(scale: 0.65)
+                                    .combined(with: .opacity)
+                            )
+                    }
+                }
+                .frame(width: 16, height: 16)
+                .animation(
+                    .easeInOut(duration: 0.18),
+                    value: viewModel.isLoading
+                )
             }
             .buttonStyle(.borderless)
             .disabled(viewModel.isLoading)
             .help(L10n.refresh)
 
+            Spacer()
+
             Text(viewModel.footerStatus)
                 .font(.caption)
                 .foregroundStyle(.secondary)
-
-            Spacer()
+                .multilineTextAlignment(.trailing)
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)

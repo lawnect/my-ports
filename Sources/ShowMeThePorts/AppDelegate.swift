@@ -52,12 +52,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     private func startAutoRefresh() {
         autoRefreshTask?.cancel()
         autoRefreshTask = Task { [weak self] in
+            var showsActivity = true
+
             while !Task.isCancelled {
                 guard let self else {
                     return
                 }
 
-                await self.viewModel.refresh()
+                await self.viewModel.refresh(showsActivity: showsActivity)
+                showsActivity = false
 
                 do {
                     try await Task.sleep(for: .seconds(3))

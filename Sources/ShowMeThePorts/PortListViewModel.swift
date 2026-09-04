@@ -25,6 +25,7 @@ final class PortListViewModel: ObservableObject {
     private let scanner: LsofPortScanner
     private let killer: ProcessPortKiller
     private var lastUpdated: Date?
+    private var isRefreshing = false
 
     init(
         scanner: LsofPortScanner = LsofPortScanner(),
@@ -79,10 +80,6 @@ final class PortListViewModel: ObservableObject {
     }
 
     var footerStatus: String {
-        if isLoading {
-            return L10n.refreshing
-        }
-
         guard let lastUpdated else {
             return L10n.notRefreshed
         }
@@ -192,15 +189,24 @@ final class PortListViewModel: ObservableObject {
         }
     }
 
-    func refresh() async {
-        guard !isLoading else {
+    func refresh(showsActivity: Bool = true) async {
+        guard !isRefreshing else {
             return
         }
 
-        isLoading = true
+        isRefreshing = true
+
+        if showsActivity {
+            isLoading = true
+        }
+
         errorMessage = nil
         defer {
-            isLoading = false
+            isRefreshing = false
+
+            if showsActivity {
+                isLoading = false
+            }
         }
 
         do {

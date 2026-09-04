@@ -54,4 +54,49 @@ final class LsofPortScannerTests: XCTestCase {
 
         XCTAssertTrue(LsofPortScanner.parse(output).isEmpty)
     }
+
+    func testParseFieldOutputCapturesParentAndUserIDs() {
+        let output = """
+        p700
+        R650
+        cproject-api
+        u501
+        PTCP
+        n127.0.0.1:4000
+        """
+
+        let entry = try! XCTUnwrap(LsofPortScanner.parse(output).first)
+
+        XCTAssertEqual(entry.parentPID, 650)
+        XCTAssertEqual(entry.userID, 501)
+    }
+
+    func testAppliesExecutablePathAndBoundedProcessAncestry() {
+        let entry = PortEntry(
+            processName: "project-api",
+            pid: 700,
+            port: 4000,
+            protocolName: "TCP",
+            endpoint: "127.0.0.1:4000",
+            parentPID: 650,
+            userID: 501
+        )
+        let processList = """
+          700   650   501 /projects/demo/target/debug/project-api
+          650   600   501 /Users/dev/.cargo/bin/cargo
+          600     1   501 /bin/zsh
+        """
+
+        let enriched = LsofPortScanner.applyingProcessMetadata(
+            to: [entry],
+            processListOutput: processList
+        )
+        let result = try! XCTUnwrap(enriched.first)
+
+        XCTAssertEqual(result.executablePath, "/projects/demo/target/debug/project-api")
+        XCTAssertEqual(
+            result.ancestorExecutablePaths,
+            ["/Users/dev/.cargo/bin/cargo", "/bin/zsh"]
+        )
+    }
 }

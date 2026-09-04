@@ -52,9 +52,11 @@ make launch
 
 ## Implementation Notes
 
-- Port discovery uses `/usr/sbin/lsof -nP -iTCP -sTCP:LISTEN -F pcPn`.
-- The default `Web` filter shows common local web server ports.
-- Use `Dev` to include broader development services such as databases and caches.
+- Port discovery uses `lsof` for TCP listeners, parent PIDs, and user IDs, then enriches them with executable paths and bounded ancestry from `ps`.
+- The default `Web` filter combines known web ports with recognized server processes.
+- Use `Dev` to include classified databases, caches, containers, mobile tools, and development runtimes.
+- Process identity takes precedence over a conventional port, and ambiguous matches are labeled in the UI with their classification reason available on hover.
+- Executable paths identify compiled Rust, Go, SwiftPM, Node module, and Python virtual-environment processes without retaining full command-line arguments.
 - Use `All` to inspect every listening port.
 - Process termination uses `/bin/kill -9 <PID>`.
 - The UI is an `NSStatusBar` item backed by an `NSPopover` with SwiftUI content.

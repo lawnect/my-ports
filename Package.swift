@@ -15,7 +15,8 @@ let package = Package(
         .target(name: "ShowMeThePortsCore"),
         .executableTarget(
             name: "ShowMeThePorts",
-            dependencies: ["ShowMeThePortsCore"]
+            dependencies: ["ShowMeThePortsCore"],
+            resources: [.process("Resources")]
         ),
         .testTarget(
             name: "ShowMeThePortsCoreTests",

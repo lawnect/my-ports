@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 import ShowMeThePortsCore
 
@@ -158,8 +159,14 @@ private struct PortRowView: View {
     let isKilling: Bool
     let onKill: () -> Void
 
+    private var classification: PortClassification {
+        entry.classification
+    }
+
     var body: some View {
         HStack(spacing: 12) {
+            ServiceIconView(classification: classification)
+
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
                     Text(String(entry.port))
@@ -170,9 +177,20 @@ private struct PortRowView: View {
                         .foregroundStyle(.secondary)
                 }
 
-                Text(entry.processName)
-                    .font(.subheadline)
-                    .lineLimit(1)
+                HStack(spacing: 5) {
+                    Text(entry.processName)
+                        .font(.subheadline)
+                        .lineLimit(1)
+
+                    Text("·")
+                        .foregroundStyle(.tertiary)
+
+                    Text(classification.displayName)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .help(classification.reason)
+                }
             }
 
             Spacer(minLength: 12)
@@ -201,5 +219,59 @@ private struct PortRowView: View {
             .help("Kill \(entry.processName) (\(entry.pid))")
         }
         .padding(.vertical, 4)
+    }
+}
+
+private struct ServiceIconView: View {
+    let classification: PortClassification
+
+    var body: some View {
+        Group {
+            if let image = brandImage {
+                Image(nsImage: image)
+                    .resizable()
+                    .scaledToFit()
+            } else {
+                Image(systemName: fallbackSymbolName)
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(width: 22, height: 22)
+        .accessibilityHidden(true)
+        .help(classification.reason)
+    }
+
+    private var brandImage: NSImage? {
+        guard let iconName = classification.iconName else {
+            return nil
+        }
+
+        let iconURL = Bundle.module.url(
+            forResource: iconName,
+            withExtension: "svg",
+            subdirectory: "ServiceIcons"
+        ) ?? Bundle.module.url(forResource: iconName, withExtension: "svg")
+
+        guard let iconURL else {
+            return nil
+        }
+
+        return NSImage(contentsOf: iconURL)
+    }
+
+    private var fallbackSymbolName: String {
+        switch classification.category {
+        case .web: "globe"
+        case .database: "cylinder"
+        case .cache: "memorychip"
+        case .messaging: "arrow.left.arrow.right"
+        case .container: "shippingbox"
+        case .mobile: "iphone"
+        case .development: "hammer"
+        case .system: "gearshape"
+        case .other: "questionmark.circle"
+        }
     }
 }

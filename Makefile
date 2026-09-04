@@ -53,6 +53,9 @@ bundle: $(ICON_FILE)
 	cp "$$(swift build -c release --show-bin-path)/$(BINARY_NAME)" "$(APP_BUNDLE)/Contents/MacOS/$(BINARY_NAME)"
 	cp Resources/Info.plist "$(APP_BUNDLE)/Contents/Info.plist"
 	cp "$(ICON_FILE)" "$(APP_BUNDLE)/Contents/Resources/$(ICON_NAME).icns"
+	@if [ -d "$$(swift build -c release --show-bin-path)/ShowMeThePorts_ShowMeThePorts.bundle" ]; then \
+		cp -R "$$(swift build -c release --show-bin-path)/ShowMeThePorts_ShowMeThePorts.bundle" "$(APP_BUNDLE)/Contents/Resources/"; \
+	fi
 	chmod +x "$(APP_BUNDLE)/Contents/MacOS/$(BINARY_NAME)"
 
 dist: bundle

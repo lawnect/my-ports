@@ -1,0 +1,45 @@
+import Foundation
+
+public enum PortCategory: String, Sendable {
+    case web
+    case database
+    case cache
+    case messaging
+    case container
+    case mobile
+    case development
+    case system
+    case other
+}
+
+public struct PortClassification: Equatable, Sendable {
+    public let category: PortCategory
+    public let displayName: String
+    public let reason: String
+    public let iconName: String?
+
+    public init(
+        category: PortCategory,
+        displayName: String,
+        reason: String,
+        iconName: String? = nil
+    ) {
+        self.category = category
+        self.displayName = displayName
+        self.reason = reason
+        self.iconName = iconName
+    }
+
+    public var isWebServer: Bool {
+        category == .web
+    }
+
+    public var isDevelopmentRelated: Bool {
+        switch category {
+        case .web, .database, .cache, .messaging, .container, .mobile, .development:
+            return true
+        case .system, .other:
+            return false
+        }
+    }
+}

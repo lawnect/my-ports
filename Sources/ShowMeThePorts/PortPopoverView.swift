@@ -10,7 +10,7 @@ struct PortPopoverView: View {
         VStack(spacing: 0) {
             header
             Divider()
-            filterBar
+            searchBar
             Divider()
             content
             errorFooter
@@ -21,52 +21,54 @@ struct PortPopoverView: View {
     }
 
     private var header: some View {
-        HStack(spacing: 10) {
-            HStack(spacing: 6) {
-                Image(nsImage: MenuBarIcon.image)
-                    .resizable()
-                    .frame(width: 18, height: 18)
-                    .accessibilityHidden(true)
-
-                Text(L10n.appName)
-                    .font(.headline)
-            }
-
-            Spacer()
-
-            Button {
-                Task {
-                    await viewModel.refresh()
+        ZStack {
+            if viewModel.showsFilterPicker {
+                Picker(L10n.filter, selection: $viewModel.filterMode) {
+                    ForEach(viewModel.availableFilterModes) { mode in
+                        Text(mode.displayName).tag(mode)
+                    }
                 }
-            } label: {
-                Image(systemName: "arrow.clockwise")
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .controlSize(.small)
+                .fixedSize(horizontal: true, vertical: false)
             }
-            .buttonStyle(.borderless)
-            .disabled(viewModel.isLoading)
-            .help(L10n.refresh)
+
+            HStack(spacing: 10) {
+                HStack(spacing: 6) {
+                    Image(nsImage: MenuBarIcon.image)
+                        .resizable()
+                        .frame(width: 18, height: 18)
+                        .accessibilityHidden(true)
+
+                    Text(L10n.appName)
+                        .font(.headline)
+                }
+
+                Spacer(minLength: 8)
+
+                Button {
+                    Task {
+                        await viewModel.refresh()
+                    }
+                } label: {
+                    Image(systemName: "arrow.clockwise")
+                }
+                .buttonStyle(.borderless)
+                .disabled(viewModel.isLoading)
+                .help(L10n.refresh)
+            }
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
     }
 
-    private var filterBar: some View {
-        VStack(spacing: 10) {
-            Picker(L10n.filter, selection: $viewModel.filterMode) {
-                ForEach(PortFilterMode.allCases) { mode in
-                    Text(mode.displayName).tag(mode)
-                }
-            }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .controlSize(.small)
-            .frame(maxWidth: .infinity)
-
-            PortSearchField(
-                text: $viewModel.portSearchText,
-                placeholder: L10n.port
-            )
-            .frame(height: 26)
-        }
+    private var searchBar: some View {
+        PortSearchField(
+            text: $viewModel.portSearchText,
+            placeholder: L10n.port
+        )
+        .frame(height: 26)
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
     }

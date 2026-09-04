@@ -2,9 +2,9 @@ import Foundation
 import ShowMeThePortsCore
 
 enum PortFilterMode: CaseIterable, Identifiable {
+    case all
     case web
     case development
-    case all
 
     var id: Self { self }
 
@@ -15,24 +15,15 @@ enum PortFilterMode: CaseIterable, Identifiable {
 
 @MainActor
 final class PortListViewModel: ObservableObject {
-    @Published private(set) var ports: [PortEntry] = []
+    @Published private var allPorts: [PortEntry] = []
     @Published private(set) var isLoading = false
     @Published private(set) var killingPIDs = Set<Int32>()
-    @Published var filterMode: PortFilterMode = .web {
-        didSet {
-            applyFilter()
-        }
-    }
-    @Published var portSearchText = "" {
-        didSet {
-            applyFilter()
-        }
-    }
+    @Published var filterMode: PortFilterMode = .all
+    @Published var portSearchText = ""
     @Published var errorMessage: String?
 
     private let scanner: LsofPortScanner
     private let killer: ProcessPortKiller
-    private var allPorts: [PortEntry] = []
     private var lastUpdated: Date?
 
     init(
@@ -41,6 +32,48 @@ final class PortListViewModel: ObservableObject {
     ) {
         self.scanner = scanner
         self.killer = killer
+    }
+
+    var ports: [PortEntry] {
+        let filteredPorts: [PortEntry]
+
+        switch filterMode {
+        case .web:
+            filteredPorts = allPorts.filter(DevelopmentPortFilter.includesWebServer)
+        case .development:
+            filteredPorts = allPorts.filter(DevelopmentPortFilter.includes)
+        case .all:
+            filteredPorts = allPorts
+        }
+
+        let searchText = normalizedPortSearchText
+
+        guard !searchText.isEmpty else {
+            return filteredPorts
+        }
+
+        return filteredPorts.filter { String($0.port).contains(searchText) }
+    }
+
+    var availableFilterModes: [PortFilterMode] {
+        var modes: [PortFilterMode] = [.all]
+
+        if allPorts.contains(where: { $0.classification.isWebServer }) {
+            modes.append(.web)
+        }
+
+        if allPorts.contains(where: { entry in
+            let classification = entry.classification
+            return classification.isDevelopmentRelated && !classification.isWebServer
+        }) {
+            modes.append(.development)
+        }
+
+        return modes
+    }
+
+    var showsFilterPicker: Bool {
+        availableFilterModes.count > 1
     }
 
     var footerStatus: String {
@@ -123,7 +156,11 @@ final class PortListViewModel: ObservableObject {
 
         do {
             allPorts = try await scanner.listeningPorts()
-            applyFilter()
+
+            if !availableFilterModes.contains(filterMode) {
+                filterMode = .all
+            }
+
             lastUpdated = Date()
         } catch {
             errorMessage = error.localizedDescription
@@ -145,26 +182,5 @@ final class PortListViewModel: ObservableObject {
 
         killingPIDs.remove(entry.pid)
         await refresh()
-    }
-
-    private func applyFilter() {
-        let filteredPorts: [PortEntry]
-
-        switch filterMode {
-        case .web:
-            filteredPorts = allPorts.filter(DevelopmentPortFilter.includesWebServer)
-        case .development:
-            filteredPorts = allPorts.filter(DevelopmentPortFilter.includes)
-        case .all:
-            filteredPorts = allPorts
-        }
-
-        let searchText = normalizedPortSearchText
-
-        if searchText.isEmpty {
-            ports = filteredPorts
-        } else {
-            ports = filteredPorts.filter { String($0.port).contains(searchText) }
-        }
     }
 }

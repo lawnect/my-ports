@@ -1,1 +1,4 @@
-<svg fill="#02569B" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Flutter</title><path d="M14.314 0L2.3 12 6 15.7 21.684.013h-7.357zm.014 11.072L7.857 17.53l6.47 6.47H21.7l-6.46-6.468 6.46-6.46h-7.37z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 317">
+  <!-- Exported from @iconify-json/logos@1.2.13 (logos:flutter). -->
+  <defs><linearGradient id="SVGYgBgLeGU" x1="3.952%" x2="75.897%" y1="26.993%" y2="52.919%"><stop offset="0%"/><stop offset="100%" stop-opacity="0"/></linearGradient></defs><path fill="#47c5fb" d="M157.666.001L.001 157.666l48.8 48.8L255.268.001zm-1.099 145.396l-84.418 84.418l48.984 49.716l48.71-48.71l85.425-85.424z"/><path fill="#00569e" d="m121.133 279.531l37.082 37.082h97.052l-85.425-85.792z"/><path fill="#00b5f8" d="m71.6 230.364l48.801-48.801l49.441 49.258l-48.709 48.71z"/><path fill="url(#SVGYgBgLeGU)" fill-opacity=".8" d="m121.133 279.531l40.56-13.459l4.029-31.131z"/>
+</svg>

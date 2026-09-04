@@ -104,3 +104,4 @@
 "confirmation.kill.title" = "終止程序？";
 "confirmation.kill.message" = "確定要終止正在監聽連接埠 %3$lld 的 %1$@（PID %2$lld）嗎？";
 "search.placeholder" = "搜尋連接埠、服務或位址";
+"classification.name.Erlang / BEAM runtime" = "Erlang / BEAM 執行環境";

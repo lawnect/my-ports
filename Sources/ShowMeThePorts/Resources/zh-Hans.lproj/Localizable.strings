@@ -104,3 +104,4 @@
 "confirmation.kill.title" = "终止进程？";
 "confirmation.kill.message" = "确定要终止正在监听端口 %3$lld 的 %1$@（PID %2$lld）吗？";
 "search.placeholder" = "搜索端口、服务或地址";
+"classification.name.Erlang / BEAM runtime" = "Erlang / BEAM 运行时";

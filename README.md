@@ -35,6 +35,23 @@ identifier. Then choose Product > Archive and, in Organizer, use Distribute App 
 Developer ID. Xcode can upload the archive for notarization and export the signed
 app.
 
+### Service Logos
+
+Service logo SVGs are generated from the
+[`@iconify-json/logos`](https://www.npmjs.com/package/@iconify-json/logos)
+package, which packages the
+[SVG Logos](https://github.com/gilbarbara/logos) collection. The collection is
+released under CC0 1.0. The selected SVG assets were exported from
+`@iconify-json/logos@1.2.13` and are committed directly to the repository; Node.js
+and pnpm are not required to build or run the macOS app.
+
+`caddy.svg`, `elixir.svg`, `rails.svg`, and `rust.svg` remain sourced from
+[Simple Icons](https://simpleicons.org/) because the SVG Logos alternatives are
+missing or unsuitable at the app's 22-point display size. See
+[`ATTRIBUTION.md`](Sources/ShowMeThePorts/Resources/ServiceIcons/ATTRIBUTION.md)
+for details. Individual logos remain subject to their owners' trademark and brand
+guidelines.
+
 ## App Bundle
 
 ```sh
@@ -43,7 +60,9 @@ open ".build/app/My Ports.app"
 ```
 
 The bundle uses `LSUIElement=true`, so the app runs without a Dock icon.
-The app icon source is `Resources/AppIcon.png`. Re-render it with `make render-icon`, then build `Resources/AppIcon.icns` with `make icons`.
+The Xcode project uses `Resources/AppIcon.icon` as its Icon Composer source. The
+legacy `make bundle` path uses `Resources/AppIcon.png`; re-render it with
+`make render-icon`, then build `Resources/AppIcon.icns` with `make icons`.
 
 To create a visible distributable copy:
 

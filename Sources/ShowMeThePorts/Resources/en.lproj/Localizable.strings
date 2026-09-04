@@ -106,3 +106,4 @@
 "confirmation.kill.title" = "Terminate Process?";
 "confirmation.kill.message" = "Are you sure you want to terminate %@ (PID %lld), listening on port %lld?";
 "search.placeholder" = "Search ports, services, or addresses";
+"classification.name.Erlang / BEAM runtime" = "Erlang / BEAM runtime";

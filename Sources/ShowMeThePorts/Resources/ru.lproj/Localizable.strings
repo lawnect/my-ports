@@ -104,3 +104,4 @@
 "confirmation.kill.title" = "Завершить процесс?";
 "confirmation.kill.message" = "Завершить %@ (PID %lld), прослушивающий порт %lld?";
 "search.placeholder" = "Поиск портов, служб или адресов";
+"classification.name.Erlang / BEAM runtime" = "Среда выполнения Erlang / BEAM";

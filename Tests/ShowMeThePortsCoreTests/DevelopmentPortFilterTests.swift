@@ -135,14 +135,138 @@ final class DevelopmentPortFilterTests: XCTestCase {
         )
     }
 
-    func testRecognizesElixirBeamRuntime() {
+    func testUsesDedicatedLogosWhenAvailable() {
+        let cases = [
+            (processName: "custom-kibana", port: 5601, iconName: "kibana"),
+            (processName: "memcached", port: 11211, iconName: "memcached"),
+            (processName: "next", port: 3000, iconName: "nextjs"),
+            (processName: "gunicorn", port: 8000, iconName: "gunicorn"),
+            (processName: "custom-rabbit", port: 15672, iconName: "rabbitmq")
+        ]
+
+        for testCase in cases {
+            let classification = DevelopmentPortFilter.classify(
+                entry(processName: testCase.processName, port: testCase.port)
+            )
+
+            XCTAssertEqual(classification.iconName, testCase.iconName)
+        }
+    }
+
+    func testUsesDedicatedPackageManagerLogos() {
+        let cases = [
+            (processName: "npm", displayName: "npm", iconName: "npm"),
+            (processName: "npx", displayName: "npm", iconName: "npm"),
+            (processName: "pnpm", displayName: "pnpm", iconName: "pnpm"),
+            (processName: "yarn", displayName: "Yarn", iconName: "yarn"),
+            (processName: "bunx", displayName: "Bun runtime", iconName: "bun")
+        ]
+
+        for testCase in cases {
+            let classification = DevelopmentPortFilter.classify(
+                entry(processName: testCase.processName, port: 24_500)
+            )
+
+            XCTAssertEqual(classification.displayName, testCase.displayName)
+            XCTAssertEqual(classification.iconName, testCase.iconName)
+        }
+    }
+
+    func testExactProcessIdentityWinsOverGenericExecutionContext() {
+        let next = DevelopmentPortFilter.classify(
+            entry(
+                processName: "next",
+                port: 3000,
+                executablePath: "/Users/dev/project/node_modules/.bin/next"
+            )
+        )
+        let gunicorn = DevelopmentPortFilter.classify(
+            entry(
+                processName: "gunicorn",
+                port: 8000,
+                executablePath: "/Users/dev/project/.venv/bin/gunicorn"
+            )
+        )
+
+        XCTAssertEqual(next.displayName, "Next.js")
+        XCTAssertEqual(next.iconName, "nextjs")
+        XCTAssertEqual(gunicorn.displayName, "Gunicorn")
+        XCTAssertEqual(gunicorn.iconName, "gunicorn")
+    }
+
+    func testNonJavaScriptRuntimeOnVitePortKeepsRuntimeLogo() {
+        let classification = DevelopmentPortFilter.classify(
+            entry(processName: "python3.13", port: 5173)
+        )
+
+        XCTAssertEqual(classification.displayName, "Python web server")
+        XCTAssertEqual(classification.iconName, "python")
+    }
+
+    func testUsesSpecificInfrastructureProcessLogos() {
+        let cases: [(String, PortCategory, String?)] = [
+            ("elasticsearch", .database, "elasticsearch"),
+            ("kibana", .development, "kibana"),
+            ("kafka", .messaging, "kafka"),
+            ("rabbitmq-server", .messaging, "rabbitmq"),
+            ("redis-sentinel", .cache, "redis"),
+            ("valkey-server", .cache, "valkey"),
+            ("mongos", .database, "mongodb"),
+            ("couchdb", .database, "couchdb"),
+            ("nginx-debug", .web, "nginx"),
+            ("colima", .container, nil)
+        ]
+
+        for (processName, category, iconName) in cases {
+            let classification = DevelopmentPortFilter.classify(
+                entry(processName: processName, port: 24_501)
+            )
+
+            XCTAssertEqual(classification.category, category)
+            XCTAssertEqual(classification.iconName, iconName)
+        }
+    }
+
+    func testUsesDedicatedToolingHelperLogos() {
+        let cases: [(String, String?)] = [
+            ("/Users/dev/codex-acp/server", "openai"),
+            ("/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/helper", "vscode"),
+            ("/Applications/FigmaAgent.app/Contents/MacOS/figma_agent", "figma"),
+            ("/Users/dev/Library/Application Support/Zed/external_agents/helper", nil)
+        ]
+
+        for (executablePath, iconName) in cases {
+            let classification = DevelopmentPortFilter.classify(
+                entry(
+                    processName: "helper",
+                    port: 24_502,
+                    executablePath: executablePath
+                )
+            )
+
+            XCTAssertEqual(classification.category, .other)
+            XCTAssertEqual(classification.displayName, "Editor helper")
+            XCTAssertEqual(classification.iconName, iconName)
+        }
+    }
+
+    func testGenericBeamRuntimeDoesNotAssumePhoenix() {
+        let classification = DevelopmentPortFilter.classify(
+            entry(processName: "beam.smp", port: 8080)
+        )
+
+        XCTAssertNotEqual(classification.displayName, "Phoenix / Elixir")
+        XCTAssertEqual(classification.iconName, "erlang")
+    }
+
+    func testRecognizesErlangBeamRuntime() {
         let classification = DevelopmentPortFilter.classify(
             entry(processName: "beam.smp", port: 24_290)
         )
 
         XCTAssertEqual(classification.category, .development)
-        XCTAssertEqual(classification.displayName, "Elixir / Erlang runtime")
-        XCTAssertEqual(classification.iconName, "elixir")
+        XCTAssertEqual(classification.displayName, "Erlang / BEAM runtime")
+        XCTAssertEqual(classification.iconName, "erlang")
     }
 
     func testRecognizesPhoenixRunningOnBeam() {
@@ -162,7 +286,7 @@ final class DevelopmentPortFilterTests: XCTestCase {
 
         XCTAssertEqual(classification.category, .development)
         XCTAssertEqual(classification.displayName, "Erlang Port Mapper")
-        XCTAssertEqual(classification.iconName, "elixir")
+        XCTAssertEqual(classification.iconName, "erlang")
     }
 
     func testRecognizesCompiledRustExecutableByTargetPath() {

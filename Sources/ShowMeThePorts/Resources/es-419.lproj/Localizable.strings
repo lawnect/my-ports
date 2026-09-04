@@ -104,3 +104,4 @@
 "confirmation.kill.title" = "¿Finalizar el proceso?";
 "confirmation.kill.message" = "¿Seguro que quieres finalizar %@ (PID %lld), que escucha en el puerto %lld?";
 "search.placeholder" = "Buscar puertos, servicios o direcciones";
+"classification.name.Erlang / BEAM runtime" = "Entorno de ejecución Erlang / BEAM";

@@ -314,6 +314,7 @@ private struct PortRowView: View {
 
 private struct ServiceIconView: View {
     let classification: PortClassification
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         Group {
@@ -321,6 +322,13 @@ private struct ServiceIconView: View {
                 Image(nsImage: image)
                     .resizable()
                     .scaledToFit()
+                    .padding(needsContrastBackground ? 2 : 0)
+                    .background {
+                        if needsContrastBackground {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(.white.opacity(0.92))
+                        }
+                    }
             } else {
                 Image(systemName: fallbackSymbolName)
                     .resizable()
@@ -363,5 +371,14 @@ private struct ServiceIconView: View {
         case .system: "gearshape"
         case .other: "questionmark.circle"
         }
+    }
+
+    private var needsContrastBackground: Bool {
+        guard colorScheme == .dark, let iconName = classification.iconName else {
+            return false
+        }
+
+        return ["deno", "gradle", "kafka", "mysql", "nextjs", "openai"]
+            .contains(iconName)
     }
 }

@@ -106,3 +106,4 @@
 "confirmation.kill.title" = "프로세스를 종료할까요?";
 "confirmation.kill.message" = "%@ (PID %lld), 포트 %lld에서 수신 대기 중인 프로세스를 정말 종료하시겠습니까?";
 "search.placeholder" = "포트, 서비스 또는 주소 검색";
+"classification.name.Erlang / BEAM runtime" = "Erlang / BEAM 런타임";

@@ -104,3 +104,4 @@
 "confirmation.kill.title" = "प्रोसेस समाप्त करें?";
 "confirmation.kill.message" = "क्या आप पोर्ट %3$lld पर सुन रहे %1$@ (PID %2$lld) को समाप्त करना चाहते हैं?";
 "search.placeholder" = "पोर्ट, सेवाएँ या पते खोजें";
+"classification.name.Erlang / BEAM runtime" = "Erlang / BEAM रनटाइम";

@@ -104,3 +104,4 @@
 "confirmation.kill.title" = "プロセスを終了しますか？";
 "confirmation.kill.message" = "ポート %3$lld で待機中の %1$@（PID %2$lld）を終了してもよろしいですか？";
 "search.placeholder" = "ポート、サービス、アドレスを検索";
+"classification.name.Erlang / BEAM runtime" = "Erlang / BEAMランタイム";

@@ -33,15 +33,16 @@ public enum DevelopmentPortFilter {
         3333: Service(category: .web, name: "Web server"),
         4000: Service(category: .web, name: "Web server"),
         4200: Service(category: .web, name: "Angular", iconName: "angular"),
-        4369: Service(category: .development, name: "Erlang Port Mapper", iconName: "elixir"),
+        4369: Service(category: .development, name: "Erlang Port Mapper", iconName: "erlang"),
         5000: Service(category: .web, name: "Web server"),
         5001: Service(category: .web, name: "Web server"),
         5037: Service(category: .mobile, name: "Android Debug Bridge", iconName: "android"),
         5173: Service(category: .web, name: "Vite", iconName: "vite"),
         5174: Service(category: .web, name: "Vite", iconName: "vite"),
         5432: Service(category: .database, name: "PostgreSQL", iconName: "postgresql"),
-        5601: Service(category: .development, name: "Kibana", iconName: "elasticsearch"),
+        5601: Service(category: .development, name: "Kibana", iconName: "kibana"),
         5672: Service(category: .messaging, name: "RabbitMQ", iconName: "rabbitmq"),
+        5984: Service(category: .database, name: "CouchDB", iconName: "couchdb"),
         6379: Service(category: .cache, name: "Redis", iconName: "redis"),
         6380: Service(category: .cache, name: "Redis", iconName: "redis"),
         7000: Service(category: .development, name: "Development service"),
@@ -55,8 +56,8 @@ public enum DevelopmentPortFilter {
         9092: Service(category: .messaging, name: "Kafka", iconName: "kafka"),
         9200: Service(category: .database, name: "Elasticsearch", iconName: "elasticsearch"),
         9300: Service(category: .database, name: "Elasticsearch transport", iconName: "elasticsearch"),
-        11211: Service(category: .cache, name: "Memcached"),
-        15672: Service(category: .messaging, name: "RabbitMQ management"),
+        11211: Service(category: .cache, name: "Memcached", iconName: "memcached"),
+        15672: Service(category: .messaging, name: "RabbitMQ management", iconName: "rabbitmq"),
         27017: Service(category: .database, name: "MongoDB", iconName: "mongodb"),
         27018: Service(category: .database, name: "MongoDB", iconName: "mongodb"),
         27019: Service(category: .database, name: "MongoDB", iconName: "mongodb")
@@ -81,11 +82,12 @@ public enum DevelopmentPortFilter {
             )
         }
 
-        if isKnownToolingHelper(entry.executablePath) {
+        if let toolingHelper = toolingHelperService(entry.executablePath) {
             return PortClassification(
-                category: .other,
-                displayName: "Editor helper",
-                reason: "Internal editor or coding-assistant service"
+                category: toolingHelper.category,
+                displayName: toolingHelper.name,
+                reason: "Internal editor or coding-assistant service",
+                iconName: toolingHelper.iconName
             )
         }
 
@@ -97,10 +99,10 @@ public enum DevelopmentPortFilter {
             )
         }
 
-        let contextService = serviceFromExecutionContext(entry)
-        let processService = contextService ?? service(forProcessName: processName)
+        let processService = service(forProcessName: processName)
+            ?? serviceFromExecutionContext(entry)
 
-        if isElixirRuntime(processName), isCandidateWebPort(entry.port) {
+        if isLikelyPhoenix(entry, processName: processName) {
             return PortClassification(
                 category: .web,
                 displayName: "Phoenix / Elixir",
@@ -123,7 +125,9 @@ public enum DevelopmentPortFilter {
         if let processService,
            processService.category == .development,
            isCandidateWebPort(entry.port) {
-            if let portService = knownServices[entry.port], portService.iconName != nil {
+            if let portService = knownServices[entry.port],
+               portService.iconName != nil,
+               isJavaScriptRuntime(processName) {
                 return PortClassification(
                     category: .web,
                     displayName: portService.name,
@@ -220,8 +224,32 @@ public enum DevelopmentPortFilter {
             || candidateWebPortRanges.contains(where: { $0.contains(port) })
     }
 
-    private static func isElixirRuntime(_ processName: String) -> Bool {
-        ["beam.smp", "elixir", "iex", "mix"].contains(processName)
+    private static func isLikelyPhoenix(_ entry: PortEntry, processName: String) -> Bool {
+        guard isCandidateWebPort(entry.port) else {
+            return false
+        }
+
+        if ["elixir", "iex", "mix"].contains(processName) {
+            return true
+        }
+
+        guard processName == "beam.smp" else {
+            return false
+        }
+
+        if entry.port == 4000 {
+            return true
+        }
+
+        let ancestorNames = entry.ancestorExecutablePaths.map(normalizedProcessName)
+        return ancestorNames.contains(where: { ["elixir", "iex", "mix"].contains($0) })
+    }
+
+    private static func isJavaScriptRuntime(_ processName: String) -> Bool {
+        [
+            "node", "nodejs", "npm", "npx", "pnpm", "yarn",
+            "bun", "bunx", "deno"
+        ].contains(processName)
     }
 
     private static func serviceFromExecutionContext(_ entry: PortEntry) -> Service? {
@@ -257,22 +285,26 @@ public enum DevelopmentPortFilter {
         return nil
     }
 
-    private static func isKnownToolingHelper(_ executablePath: String?) -> Bool {
+    private static func toolingHelperService(_ executablePath: String?) -> Service? {
         guard let path = executablePath?.lowercased() else {
-            return false
+            return nil
         }
 
-        let markers = [
-            "/application support/zed/external_agents/",
-            "/.local/share/uv/tools/serena-agent/",
-            "/codex-acp/",
-            "/visual studio code.app/contents/resources/app/extensions/",
-            "/cursor.app/contents/resources/app/extensions/",
-            "/dia.app/contents/resources/agent-server-resources/",
-            "/figmaagent.app/contents/"
+        let markers: [(path: String, iconName: String?)] = [
+            ("/application support/zed/external_agents/", nil),
+            ("/.local/share/uv/tools/serena-agent/", nil),
+            ("/codex-acp/", "openai"),
+            ("/visual studio code.app/contents/resources/app/extensions/", "vscode"),
+            ("/cursor.app/contents/resources/app/extensions/", nil),
+            ("/dia.app/contents/resources/agent-server-resources/", nil),
+            ("/figmaagent.app/contents/", "figma")
         ]
 
-        return markers.contains(where: path.contains)
+        guard let match = markers.first(where: { path.contains($0.path) }) else {
+            return nil
+        }
+
+        return Service(category: .other, name: "Editor helper", iconName: match.iconName)
     }
 
     private static func isSystemExecutable(_ executablePath: String?) -> Bool {
@@ -323,31 +355,61 @@ public enum DevelopmentPortFilter {
 
     private static func service(forProcessName processName: String) -> Service? {
         switch processName {
-        case "nginx":
+        case "nginx", "nginx-debug":
             return Service(category: .web, name: "Nginx", iconName: "nginx")
         case "httpd", "apache2":
             return Service(category: .web, name: "Apache", iconName: "apache")
         case "caddy":
             return Service(category: .web, name: "Caddy", iconName: "caddy")
-        case "vite", "next":
-            return Service(category: .web, name: "JavaScript web server", iconName: "vite")
-        case "gunicorn", "uvicorn", "puma":
-            return Service(category: .web, name: "Application server", iconName: processName == "puma" ? "ruby" : "python")
+        case "vite":
+            return Service(category: .web, name: "Vite", iconName: "vite")
+        case "next", "next-server":
+            return Service(category: .web, name: "Next.js", iconName: "nextjs")
+        case "gunicorn":
+            return Service(category: .web, name: "Gunicorn", iconName: "gunicorn")
+        case "uvicorn":
+            return Service(category: .web, name: "Uvicorn", iconName: "python")
+        case "puma":
+            return Service(category: .web, name: "Puma", iconName: "ruby")
         case "postgres", "postmaster":
             return Service(category: .database, name: "PostgreSQL", iconName: "postgresql")
-        case "mysqld", "mariadbd":
-            return Service(category: .database, name: "MySQL/MariaDB", iconName: processName == "mariadbd" ? "mariadb" : "mysql")
-        case "mongod":
+        case "mysqld":
+            return Service(category: .database, name: "MySQL", iconName: "mysql")
+        case "mariadbd":
+            return Service(category: .database, name: "MariaDB", iconName: "mariadb")
+        case "mongod", "mongos":
             return Service(category: .database, name: "MongoDB", iconName: "mongodb")
-        case "redis-server", "memcached":
-            return Service(category: .cache, name: "Cache server", iconName: processName == "redis-server" ? "redis" : nil)
-        case "docker", "dockerd", "com.docker.backend", "colima":
+        case "couchdb":
+            return Service(category: .database, name: "CouchDB", iconName: "couchdb")
+        case "elasticsearch":
+            return Service(category: .database, name: "Elasticsearch", iconName: "elasticsearch")
+        case "kibana":
+            return Service(category: .development, name: "Kibana", iconName: "kibana")
+        case "redis-server", "redis-sentinel":
+            return Service(category: .cache, name: "Redis", iconName: "redis")
+        case "valkey-server":
+            return Service(category: .cache, name: "Valkey", iconName: "valkey")
+        case "memcached":
+            return Service(category: .cache, name: "Memcached", iconName: "memcached")
+        case "kafka":
+            return Service(category: .messaging, name: "Kafka", iconName: "kafka")
+        case "rabbitmq-server":
+            return Service(category: .messaging, name: "RabbitMQ", iconName: "rabbitmq")
+        case "docker", "dockerd", "docker-proxy", "com.docker.backend", "com.docker.vpnkit", "vpnkit":
             return Service(category: .container, name: "Container service", iconName: "docker")
+        case "colima":
+            return Service(category: .container, name: "Colima")
         case "adb":
             return Service(category: .mobile, name: "Android Debug Bridge", iconName: "android")
-        case "node", "nodejs", "npm", "npx", "pnpm", "yarn":
+        case "node", "nodejs":
             return Service(category: .development, name: "Node.js runtime", iconName: "node")
-        case "bun":
+        case "npm", "npx":
+            return Service(category: .development, name: "npm", iconName: "npm")
+        case "pnpm":
+            return Service(category: .development, name: "pnpm", iconName: "pnpm")
+        case "yarn":
+            return Service(category: .development, name: "Yarn", iconName: "yarn")
+        case "bun", "bunx":
             return Service(category: .development, name: "Bun runtime", iconName: "bun")
         case "deno":
             return Service(category: .development, name: "Deno runtime", iconName: "deno")
@@ -377,11 +439,16 @@ public enum DevelopmentPortFilter {
             return Service(category: .development, name: "Dart runtime", iconName: "dart")
         case "flutter":
             return Service(category: .development, name: "Flutter tool", iconName: "flutter")
-        case "beam.smp", "elixir", "iex", "mix":
+        case "elixir", "iex", "mix":
             return Service(category: .development, name: "Elixir / Erlang runtime", iconName: "elixir")
+        case "beam.smp", "erl", "erlexec":
+            return Service(category: .development, name: "Erlang / BEAM runtime", iconName: "erlang")
         case "epmd":
-            return Service(category: .development, name: "Erlang Port Mapper", iconName: "elixir")
+            return Service(category: .development, name: "Erlang Port Mapper", iconName: "erlang")
         default:
+            if processName.hasPrefix("next-server") {
+                return Service(category: .web, name: "Next.js", iconName: "nextjs")
+            }
             if processName.hasPrefix("python") {
                 return Service(category: .development, name: "Python runtime", iconName: "python")
             }

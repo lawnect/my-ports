@@ -104,3 +104,4 @@
 "confirmation.kill.title" = "إنهاء العملية؟";
 "confirmation.kill.message" = "هل تريد بالتأكيد إنهاء %1$@ (PID %2$lld) الذي يستمع على المنفذ %3$lld؟";
 "search.placeholder" = "البحث في المنافذ أو الخدمات أو العناوين";
+"classification.name.Erlang / BEAM runtime" = "بيئة تشغيل Erlang / BEAM";

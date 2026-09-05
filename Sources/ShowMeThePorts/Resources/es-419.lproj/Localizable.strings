@@ -115,3 +115,26 @@
 "protected.reason.unknown_owner" = "No se pudo verificar el propietario del proceso.";
 "protected.reason.administrator_owned" = "Este proceso pertenece a un administrador. Detenlo desde su aplicación o administrador de servicios.";
 "protected.reason.another_user" = "Este proceso pertenece a otro usuario. My Ports solo finaliza tus propios procesos.";
+
+"classification.name.Tailscale Network Extension" = "Extensión de red de Tailscale";
+"classification.name.Zed Local Service" = "Servicio local de Zed";
+"classification.name.Dia AI Agent" = "Agente de IA de Dia";
+"classification.name.Serena MCP · Codex" = "Serena MCP · Codex";
+"classification.name.Serena MCP · Zed" = "Serena MCP · Zed";
+"classification.name.Serena MCP Server" = "Servidor MCP de Serena";
+"classification.name.Figma Agent" = "Agente de Figma";
+"classification.name.Codex ACP Agent" = "Agente ACP de Codex";
+"classification.name.Zed External Agent" = "Agente externo de Zed";
+"classification.name.VS Code Extension Host" = "Host de extensiones de VS Code";
+"classification.name.Cursor Extension Host" = "Host de extensiones de Cursor";
+"classification.reason.Private network service managed by Tailscale" = "Servicio de red privada administrado por Tailscale";
+"classification.reason.Local service managed by the Zed editor" = "Servicio local administrado por el editor Zed";
+"classification.reason.Local AI agent managed by the Dia browser" = "Agente de IA local administrado por el navegador Dia";
+"classification.reason.Serena MCP server launched by Codex" = "Servidor MCP de Serena iniciado por Codex";
+"classification.reason.Serena MCP server launched by Zed" = "Servidor MCP de Serena iniciado por Zed";
+"classification.reason.Local coding-assistant context server" = "Servidor de contexto local para el asistente de programación";
+"classification.reason.Local helper managed by Figma" = "Proceso auxiliar local administrado por Figma";
+"classification.reason.Codex agent connected to an editor" = "Agente de Codex conectado a un editor";
+"classification.reason.External coding agent managed by Zed" = "Agente de programación externo administrado por Zed";
+"classification.reason.Local extension service managed by Visual Studio Code" = "Servicio de extensión local administrado por Visual Studio Code";
+"classification.reason.Local extension service managed by Cursor" = "Servicio de extensión local administrado por Cursor";

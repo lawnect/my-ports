@@ -227,27 +227,116 @@ final class DevelopmentPortFilterTests: XCTestCase {
         }
     }
 
-    func testUsesDedicatedToolingHelperLogos() {
-        let cases: [(String, String?)] = [
-            ("/Users/dev/codex-acp/server", "openai"),
-            ("/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/helper", "vscode"),
-            ("/Applications/FigmaAgent.app/Contents/MacOS/figma_agent", "figma"),
-            ("/Users/dev/Library/Application Support/Zed/external_agents/helper", nil)
+    func testIdentifiesToolingHelpersByProduct() {
+        let cases: [(path: String, name: String, iconName: String?, bundlePath: String?)] = [
+            (
+                "/Users/dev/codex-acp/server",
+                "Codex ACP Agent",
+                "openai",
+                nil
+            ),
+            (
+                "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/helper",
+                "VS Code Extension Host",
+                nil,
+                "/Applications/Visual Studio Code.app"
+            ),
+            (
+                "/Applications/Cursor.app/Contents/Resources/app/extensions/helper",
+                "Cursor Extension Host",
+                nil,
+                "/Applications/Cursor.app"
+            ),
+            (
+                "/Users/dev/Applications/FigmaAgent.app/Contents/MacOS/figma_agent",
+                "Figma Agent",
+                nil,
+                "/Users/dev/Applications/FigmaAgent.app"
+            )
         ]
 
-        for (executablePath, iconName) in cases {
+        for testCase in cases {
             let classification = DevelopmentPortFilter.classify(
                 entry(
                     processName: "helper",
                     port: 24_502,
-                    executablePath: executablePath
+                    executablePath: testCase.path
                 )
             )
 
             XCTAssertEqual(classification.category, .other)
-            XCTAssertEqual(classification.displayName, "Editor helper")
-            XCTAssertEqual(classification.iconName, iconName)
+            XCTAssertEqual(classification.displayName, testCase.name)
+            XCTAssertEqual(classification.iconName, testCase.iconName)
+            XCTAssertEqual(classification.applicationBundlePath, testCase.bundlePath)
         }
+    }
+
+    func testIdentifiesDiaAgentAndUsesInstalledApplicationIcon() {
+        let classification = DevelopmentPortFilter.classify(
+            entry(
+                processName: "agent-server",
+                port: 63_655,
+                executablePath: "/Applications/Dia.app/Contents/Resources/agent-server-resources/dist/agent-server"
+            )
+        )
+
+        XCTAssertEqual(classification.displayName, "Dia AI Agent")
+        XCTAssertEqual(classification.applicationBundlePath, "/Applications/Dia.app")
+    }
+
+    func testDistinguishesSerenaLaunchedByCodexAndZed() {
+        let executablePath = "/Users/dev/.local/share/uv/tools/serena-agent/bin/python"
+        let codex = DevelopmentPortFilter.classify(
+            entry(
+                processName: "python3.13",
+                port: 24_282,
+                executablePath: executablePath,
+                ancestorExecutablePaths: [
+                    "/Users/dev/Library/Application Support/Zed/external_agents/codex-acp/bin/codex",
+                    "/Applications/Zed.app/Contents/MacOS/zed"
+                ]
+            )
+        )
+        let zed = DevelopmentPortFilter.classify(
+            entry(
+                processName: "python3.13",
+                port: 24_283,
+                executablePath: executablePath,
+                ancestorExecutablePaths: ["/Applications/Zed.app/Contents/MacOS/zed"]
+            )
+        )
+
+        XCTAssertEqual(codex.displayName, "Serena MCP · Codex")
+        XCTAssertEqual(codex.iconName, "openai")
+        XCTAssertEqual(zed.displayName, "Serena MCP · Zed")
+        XCTAssertEqual(zed.applicationBundlePath, "/Applications/Zed.app")
+    }
+
+    func testIdentifiesTailscaleBeforeGenericSystemProcessRule() {
+        let classification = DevelopmentPortFilter.classify(
+            entry(
+                processName: "IPNExtension",
+                port: 49_299,
+                executablePath: "/Applications/Tailscale.app/Contents/PlugIns/IPNExtension.appex/Contents/MacOS/IPNExtension"
+            )
+        )
+
+        XCTAssertEqual(classification.category, .other)
+        XCTAssertEqual(classification.displayName, "Tailscale Network Extension")
+        XCTAssertEqual(classification.applicationBundlePath, "/Applications/Tailscale.app")
+    }
+
+    func testIdentifiesZedLocalService() {
+        let classification = DevelopmentPortFilter.classify(
+            entry(
+                processName: "zed",
+                port: 44_438,
+                executablePath: "/Applications/Zed.app/Contents/MacOS/zed"
+            )
+        )
+
+        XCTAssertEqual(classification.displayName, "Zed Local Service")
+        XCTAssertEqual(classification.applicationBundlePath, "/Applications/Zed.app")
     }
 
     func testGenericBeamRuntimeDoesNotAssumePhoenix() {
@@ -326,7 +415,7 @@ final class DevelopmentPortFilterTests: XCTestCase {
         )
 
         XCTAssertFalse(DevelopmentPortFilter.includes(entry))
-        XCTAssertEqual(DevelopmentPortFilter.classify(entry).displayName, "Editor helper")
+        XCTAssertEqual(DevelopmentPortFilter.classify(entry).displayName, "Serena MCP Server")
     }
 
     func testRuntimeIdentityIsPreservedOnGenericWebPort() {

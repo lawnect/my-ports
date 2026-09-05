@@ -115,3 +115,26 @@
 "protected.reason.unknown_owner" = "无法验证进程所有者。";
 "protected.reason.administrator_owned" = "此进程由管理员拥有，请从对应应用或服务管理器中停止。";
 "protected.reason.another_user" = "此进程属于其他用户。My Ports 只终止当前用户的进程。";
+
+"classification.name.Tailscale Network Extension" = "Tailscale 网络扩展";
+"classification.name.Zed Local Service" = "Zed 本地服务";
+"classification.name.Dia AI Agent" = "Dia AI 代理";
+"classification.name.Serena MCP · Codex" = "Serena MCP · Codex";
+"classification.name.Serena MCP · Zed" = "Serena MCP · Zed";
+"classification.name.Serena MCP Server" = "Serena MCP 服务器";
+"classification.name.Figma Agent" = "Figma 代理";
+"classification.name.Codex ACP Agent" = "Codex ACP 代理";
+"classification.name.Zed External Agent" = "Zed 外部代理";
+"classification.name.VS Code Extension Host" = "VS Code 扩展宿主";
+"classification.name.Cursor Extension Host" = "Cursor 扩展宿主";
+"classification.reason.Private network service managed by Tailscale" = "由 Tailscale 管理的专用网络服务";
+"classification.reason.Local service managed by the Zed editor" = "由 Zed 编辑器管理的本地服务";
+"classification.reason.Local AI agent managed by the Dia browser" = "由 Dia 浏览器管理的本地 AI 代理";
+"classification.reason.Serena MCP server launched by Codex" = "由 Codex 启动的 Serena MCP 服务器";
+"classification.reason.Serena MCP server launched by Zed" = "由 Zed 启动的 Serena MCP 服务器";
+"classification.reason.Local coding-assistant context server" = "编程助手的本地上下文服务器";
+"classification.reason.Local helper managed by Figma" = "由 Figma 管理的本地辅助程序";
+"classification.reason.Codex agent connected to an editor" = "连接到编辑器的 Codex 代理";
+"classification.reason.External coding agent managed by Zed" = "由 Zed 管理的外部编程代理";
+"classification.reason.Local extension service managed by Visual Studio Code" = "由 Visual Studio Code 管理的本地扩展服务";
+"classification.reason.Local extension service managed by Cursor" = "由 Cursor 管理的本地扩展服务";

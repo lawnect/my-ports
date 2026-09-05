@@ -94,6 +94,7 @@ make launch
 - Use `Dev` to include classified databases, caches, containers, mobile tools, and development runtimes.
 - Process identity takes precedence over a conventional port, and ambiguous matches are labeled in the UI with their classification reason available on hover.
 - Executable paths identify compiled Rust, Go, SwiftPM, Node module, and Python virtual-environment processes without retaining full command-line arguments.
+- Bundled application paths and process ancestry distinguish Dia, Serena, Codex, Zed, Figma, Tailscale, VS Code, and Cursor helpers; installed application icons are used when available.
 - Use `All` to inspect every listening port.
 - Process termination uses `/bin/kill -9 <PID>` only for verified processes owned by the current user. Administrator, other-user, macOS, and unknown-owner processes are protected in the UI.
 - The UI is an `NSStatusBar` item backed by an `NSPopover` with SwiftUI content.

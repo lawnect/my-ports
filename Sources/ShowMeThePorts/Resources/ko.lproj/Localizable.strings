@@ -117,3 +117,26 @@
 "protected.reason.unknown_owner" = "프로세스 소유자를 확인할 수 없습니다.";
 "protected.reason.administrator_owned" = "관리자가 소유한 프로세스입니다. 해당 앱이나 서비스 관리자에서 종료하세요.";
 "protected.reason.another_user" = "다른 사용자가 소유한 프로세스입니다. My Ports는 현재 사용자의 프로세스만 종료합니다.";
+
+"classification.name.Tailscale Network Extension" = "Tailscale 네트워크 확장";
+"classification.name.Zed Local Service" = "Zed 로컬 서비스";
+"classification.name.Dia AI Agent" = "Dia AI 에이전트";
+"classification.name.Serena MCP · Codex" = "Serena MCP · Codex";
+"classification.name.Serena MCP · Zed" = "Serena MCP · Zed";
+"classification.name.Serena MCP Server" = "Serena MCP 서버";
+"classification.name.Figma Agent" = "Figma 에이전트";
+"classification.name.Codex ACP Agent" = "Codex ACP 에이전트";
+"classification.name.Zed External Agent" = "Zed 외부 에이전트";
+"classification.name.VS Code Extension Host" = "VS Code 확장 호스트";
+"classification.name.Cursor Extension Host" = "Cursor 확장 호스트";
+"classification.reason.Private network service managed by Tailscale" = "Tailscale이 관리하는 사설 네트워크 서비스";
+"classification.reason.Local service managed by the Zed editor" = "Zed 에디터가 관리하는 로컬 서비스";
+"classification.reason.Local AI agent managed by the Dia browser" = "Dia 브라우저가 관리하는 로컬 AI 에이전트";
+"classification.reason.Serena MCP server launched by Codex" = "Codex가 실행한 Serena MCP 서버";
+"classification.reason.Serena MCP server launched by Zed" = "Zed가 실행한 Serena MCP 서버";
+"classification.reason.Local coding-assistant context server" = "코딩 도우미용 로컬 컨텍스트 서버";
+"classification.reason.Local helper managed by Figma" = "Figma가 관리하는 로컬 도우미";
+"classification.reason.Codex agent connected to an editor" = "에디터에 연결된 Codex 에이전트";
+"classification.reason.External coding agent managed by Zed" = "Zed가 관리하는 외부 코딩 에이전트";
+"classification.reason.Local extension service managed by Visual Studio Code" = "Visual Studio Code가 관리하는 로컬 확장 서비스";
+"classification.reason.Local extension service managed by Cursor" = "Cursor가 관리하는 로컬 확장 서비스";

@@ -115,3 +115,26 @@
 "protected.reason.unknown_owner" = "تعذر التحقق من مالك العملية.";
 "protected.reason.administrator_owned" = "هذه العملية مملوكة لمسؤول. أوقفها من التطبيق أو مدير الخدمات.";
 "protected.reason.another_user" = "هذه العملية مملوكة لمستخدم آخر. ينهي My Ports عملياتك فقط.";
+
+"classification.name.Tailscale Network Extension" = "امتداد شبكة Tailscale";
+"classification.name.Zed Local Service" = "خدمة Zed المحلية";
+"classification.name.Dia AI Agent" = "وكيل Dia للذكاء الاصطناعي";
+"classification.name.Serena MCP · Codex" = "Serena MCP · Codex";
+"classification.name.Serena MCP · Zed" = "Serena MCP · Zed";
+"classification.name.Serena MCP Server" = "خادم Serena MCP";
+"classification.name.Figma Agent" = "وكيل Figma";
+"classification.name.Codex ACP Agent" = "وكيل Codex ACP";
+"classification.name.Zed External Agent" = "وكيل Zed الخارجي";
+"classification.name.VS Code Extension Host" = "مضيف إضافات VS Code";
+"classification.name.Cursor Extension Host" = "مضيف إضافات Cursor";
+"classification.reason.Private network service managed by Tailscale" = "خدمة شبكة خاصة تديرها Tailscale";
+"classification.reason.Local service managed by the Zed editor" = "خدمة محلية يديرها محرر Zed";
+"classification.reason.Local AI agent managed by the Dia browser" = "وكيل ذكاء اصطناعي محلي يديره متصفح Dia";
+"classification.reason.Serena MCP server launched by Codex" = "خادم Serena MCP شغّله Codex";
+"classification.reason.Serena MCP server launched by Zed" = "خادم Serena MCP شغّله Zed";
+"classification.reason.Local coding-assistant context server" = "خادم سياق محلي لمساعد البرمجة";
+"classification.reason.Local helper managed by Figma" = "مساعد محلي تديره Figma";
+"classification.reason.Codex agent connected to an editor" = "وكيل Codex متصل بمحرر";
+"classification.reason.External coding agent managed by Zed" = "وكيل برمجة خارجي يديره Zed";
+"classification.reason.Local extension service managed by Visual Studio Code" = "خدمة إضافات محلية يديرها Visual Studio Code";
+"classification.reason.Local extension service managed by Cursor" = "خدمة إضافات محلية يديرها Cursor";

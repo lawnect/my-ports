@@ -115,3 +115,26 @@
 "protected.reason.unknown_owner" = "Не удалось проверить владельца процесса.";
 "protected.reason.administrator_owned" = "Процесс принадлежит администратору. Остановите его в приложении или диспетчере служб.";
 "protected.reason.another_user" = "Процесс принадлежит другому пользователю. My Ports завершает только ваши процессы.";
+
+"classification.name.Tailscale Network Extension" = "Сетевое расширение Tailscale";
+"classification.name.Zed Local Service" = "Локальная служба Zed";
+"classification.name.Dia AI Agent" = "ИИ-агент Dia";
+"classification.name.Serena MCP · Codex" = "Serena MCP · Codex";
+"classification.name.Serena MCP · Zed" = "Serena MCP · Zed";
+"classification.name.Serena MCP Server" = "Сервер Serena MCP";
+"classification.name.Figma Agent" = "Агент Figma";
+"classification.name.Codex ACP Agent" = "Агент Codex ACP";
+"classification.name.Zed External Agent" = "Внешний агент Zed";
+"classification.name.VS Code Extension Host" = "Хост расширений VS Code";
+"classification.name.Cursor Extension Host" = "Хост расширений Cursor";
+"classification.reason.Private network service managed by Tailscale" = "Служба частной сети под управлением Tailscale";
+"classification.reason.Local service managed by the Zed editor" = "Локальная служба под управлением редактора Zed";
+"classification.reason.Local AI agent managed by the Dia browser" = "Локальный ИИ-агент под управлением браузера Dia";
+"classification.reason.Serena MCP server launched by Codex" = "Сервер Serena MCP, запущенный Codex";
+"classification.reason.Serena MCP server launched by Zed" = "Сервер Serena MCP, запущенный Zed";
+"classification.reason.Local coding-assistant context server" = "Локальный сервер контекста помощника по программированию";
+"classification.reason.Local helper managed by Figma" = "Локальный помощник под управлением Figma";
+"classification.reason.Codex agent connected to an editor" = "Агент Codex, подключённый к редактору";
+"classification.reason.External coding agent managed by Zed" = "Внешний агент программирования под управлением Zed";
+"classification.reason.Local extension service managed by Visual Studio Code" = "Локальная служба расширений под управлением Visual Studio Code";
+"classification.reason.Local extension service managed by Cursor" = "Локальная служба расширений под управлением Cursor";

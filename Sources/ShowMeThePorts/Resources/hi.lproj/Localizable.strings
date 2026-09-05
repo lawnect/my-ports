@@ -115,3 +115,26 @@
 "protected.reason.unknown_owner" = "प्रोसेस के मालिक की पुष्टि नहीं हो सकी।";
 "protected.reason.administrator_owned" = "यह प्रोसेस व्यवस्थापक का है। इसे संबंधित ऐप या सेवा प्रबंधक से रोकें।";
 "protected.reason.another_user" = "यह प्रोसेस किसी अन्य उपयोगकर्ता का है। My Ports केवल आपके प्रोसेस समाप्त करता है।";
+
+"classification.name.Tailscale Network Extension" = "Tailscale नेटवर्क एक्सटेंशन";
+"classification.name.Zed Local Service" = "Zed लोकल सर्विस";
+"classification.name.Dia AI Agent" = "Dia AI एजेंट";
+"classification.name.Serena MCP · Codex" = "Serena MCP · Codex";
+"classification.name.Serena MCP · Zed" = "Serena MCP · Zed";
+"classification.name.Serena MCP Server" = "Serena MCP सर्वर";
+"classification.name.Figma Agent" = "Figma एजेंट";
+"classification.name.Codex ACP Agent" = "Codex ACP एजेंट";
+"classification.name.Zed External Agent" = "Zed बाहरी एजेंट";
+"classification.name.VS Code Extension Host" = "VS Code एक्सटेंशन होस्ट";
+"classification.name.Cursor Extension Host" = "Cursor एक्सटेंशन होस्ट";
+"classification.reason.Private network service managed by Tailscale" = "Tailscale द्वारा प्रबंधित निजी नेटवर्क सेवा";
+"classification.reason.Local service managed by the Zed editor" = "Zed एडिटर द्वारा प्रबंधित लोकल सेवा";
+"classification.reason.Local AI agent managed by the Dia browser" = "Dia ब्राउज़र द्वारा प्रबंधित लोकल AI एजेंट";
+"classification.reason.Serena MCP server launched by Codex" = "Codex द्वारा शुरू किया गया Serena MCP सर्वर";
+"classification.reason.Serena MCP server launched by Zed" = "Zed द्वारा शुरू किया गया Serena MCP सर्वर";
+"classification.reason.Local coding-assistant context server" = "कोडिंग सहायक के लिए लोकल कॉन्टेक्स्ट सर्वर";
+"classification.reason.Local helper managed by Figma" = "Figma द्वारा प्रबंधित लोकल हेल्पर";
+"classification.reason.Codex agent connected to an editor" = "एडिटर से जुड़ा Codex एजेंट";
+"classification.reason.External coding agent managed by Zed" = "Zed द्वारा प्रबंधित बाहरी कोडिंग एजेंट";
+"classification.reason.Local extension service managed by Visual Studio Code" = "Visual Studio Code द्वारा प्रबंधित लोकल एक्सटेंशन सेवा";
+"classification.reason.Local extension service managed by Cursor" = "Cursor द्वारा प्रबंधित लोकल एक्सटेंशन सेवा";

@@ -115,3 +115,26 @@
 "protected.reason.unknown_owner" = "プロセスの所有者を確認できませんでした。";
 "protected.reason.administrator_owned" = "管理者が所有するプロセスです。アプリまたはサービス管理画面から停止してください。";
 "protected.reason.another_user" = "別のユーザーが所有するプロセスです。My Portsは現在のユーザーのプロセスだけを終了します。";
+
+"classification.name.Tailscale Network Extension" = "Tailscale ネットワーク拡張";
+"classification.name.Zed Local Service" = "Zed ローカルサービス";
+"classification.name.Dia AI Agent" = "Dia AI エージェント";
+"classification.name.Serena MCP · Codex" = "Serena MCP · Codex";
+"classification.name.Serena MCP · Zed" = "Serena MCP · Zed";
+"classification.name.Serena MCP Server" = "Serena MCP サーバー";
+"classification.name.Figma Agent" = "Figma エージェント";
+"classification.name.Codex ACP Agent" = "Codex ACP エージェント";
+"classification.name.Zed External Agent" = "Zed 外部エージェント";
+"classification.name.VS Code Extension Host" = "VS Code 拡張機能ホスト";
+"classification.name.Cursor Extension Host" = "Cursor 拡張機能ホスト";
+"classification.reason.Private network service managed by Tailscale" = "Tailscale が管理するプライベートネットワークサービス";
+"classification.reason.Local service managed by the Zed editor" = "Zed エディタが管理するローカルサービス";
+"classification.reason.Local AI agent managed by the Dia browser" = "Dia ブラウザが管理するローカル AI エージェント";
+"classification.reason.Serena MCP server launched by Codex" = "Codex が起動した Serena MCP サーバー";
+"classification.reason.Serena MCP server launched by Zed" = "Zed が起動した Serena MCP サーバー";
+"classification.reason.Local coding-assistant context server" = "コーディングアシスタント用のローカルコンテキストサーバー";
+"classification.reason.Local helper managed by Figma" = "Figma が管理するローカルヘルパー";
+"classification.reason.Codex agent connected to an editor" = "エディタに接続された Codex エージェント";
+"classification.reason.External coding agent managed by Zed" = "Zed が管理する外部コーディングエージェント";
+"classification.reason.Local extension service managed by Visual Studio Code" = "Visual Studio Code が管理するローカル拡張サービス";
+"classification.reason.Local extension service managed by Cursor" = "Cursor が管理するローカル拡張サービス";

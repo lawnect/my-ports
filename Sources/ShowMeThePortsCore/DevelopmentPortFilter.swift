@@ -74,6 +74,10 @@ public enum DevelopmentPortFilter {
     public static func classify(_ entry: PortEntry) -> PortClassification {
         let processName = normalizedProcessName(entry.processName)
 
+        if let applicationService = applicationService(entry, processName: processName) {
+            return applicationService
+        }
+
         if excludedProcessNames.contains(processName) {
             return PortClassification(
                 category: .system,
@@ -82,13 +86,8 @@ public enum DevelopmentPortFilter {
             )
         }
 
-        if let toolingHelper = toolingHelperService(entry.executablePath) {
-            return PortClassification(
-                category: toolingHelper.category,
-                displayName: toolingHelper.name,
-                reason: "Internal editor or coding-assistant service",
-                iconName: toolingHelper.iconName
-            )
+        if let toolingHelper = toolingHelperClassification(entry) {
+            return toolingHelper
         }
 
         if isSystemExecutable(entry.executablePath) {
@@ -172,7 +171,8 @@ public enum DevelopmentPortFilter {
             return PortClassification(
                 category: .other,
                 displayName: "App helper",
-                reason: "Listener belongs to a bundled macOS application"
+                reason: "Listener belongs to a bundled macOS application",
+                applicationBundlePath: applicationBundlePath(in: entry.executablePath)
             )
         }
 
@@ -285,26 +285,148 @@ public enum DevelopmentPortFilter {
         return nil
     }
 
-    private static func toolingHelperService(_ executablePath: String?) -> Service? {
-        guard let path = executablePath?.lowercased() else {
+    private static func applicationService(
+        _ entry: PortEntry,
+        processName: String
+    ) -> PortClassification? {
+        let paths = executionPaths(for: entry)
+
+        if processName == "ipnextension",
+           let bundlePath = applicationBundlePath(matching: "tailscale.app", in: paths) {
+            return PortClassification(
+                category: .other,
+                displayName: "Tailscale Network Extension",
+                reason: "Private network service managed by Tailscale",
+                applicationBundlePath: bundlePath
+            )
+        }
+
+        if processName == "zed",
+           let bundlePath = applicationBundlePath(matching: "zed.app", in: paths) {
+            return PortClassification(
+                category: .other,
+                displayName: "Zed Local Service",
+                reason: "Local service managed by the Zed editor",
+                applicationBundlePath: bundlePath
+            )
+        }
+
+        return nil
+    }
+
+    private static func toolingHelperClassification(_ entry: PortEntry) -> PortClassification? {
+        let executablePath = entry.executablePath?.lowercased() ?? ""
+        let paths = executionPaths(for: entry)
+        let normalizedPaths = paths.map { $0.lowercased() }
+
+        if executablePath.contains("/dia.app/contents/resources/agent-server-resources/"),
+           let bundlePath = applicationBundlePath(matching: "dia.app", in: paths) {
+            return PortClassification(
+                category: .other,
+                displayName: "Dia AI Agent",
+                reason: "Local AI agent managed by the Dia browser",
+                applicationBundlePath: bundlePath
+            )
+        }
+
+        if executablePath.contains("/.local/share/uv/tools/serena-agent/") {
+            if normalizedPaths.contains(where: { $0.contains("/codex-acp/") }) {
+                return PortClassification(
+                    category: .other,
+                    displayName: "Serena MCP · Codex",
+                    reason: "Serena MCP server launched by Codex",
+                    iconName: "openai"
+                )
+            }
+
+            if let bundlePath = applicationBundlePath(matching: "zed.app", in: paths) {
+                return PortClassification(
+                    category: .other,
+                    displayName: "Serena MCP · Zed",
+                    reason: "Serena MCP server launched by Zed",
+                    applicationBundlePath: bundlePath
+                )
+            }
+
+            return PortClassification(
+                category: .other,
+                displayName: "Serena MCP Server",
+                reason: "Local coding-assistant context server"
+            )
+        }
+
+        if executablePath.contains("/figmaagent.app/contents/"),
+           let bundlePath = applicationBundlePath(in: entry.executablePath) {
+            return PortClassification(
+                category: .other,
+                displayName: "Figma Agent",
+                reason: "Local helper managed by Figma",
+                applicationBundlePath: bundlePath
+            )
+        }
+
+        if normalizedPaths.contains(where: { $0.contains("/codex-acp/") }) {
+            return PortClassification(
+                category: .other,
+                displayName: "Codex ACP Agent",
+                reason: "Codex agent connected to an editor",
+                iconName: "openai"
+            )
+        }
+
+        if normalizedPaths.contains(where: { $0.contains("/application support/zed/external_agents/") }) {
+            return PortClassification(
+                category: .other,
+                displayName: "Zed External Agent",
+                reason: "External coding agent managed by Zed",
+                applicationBundlePath: applicationBundlePath(matching: "zed.app", in: paths)
+            )
+        }
+
+        if executablePath.contains("/visual studio code.app/contents/resources/app/extensions/"),
+           let bundlePath = applicationBundlePath(matching: "visual studio code.app", in: paths) {
+            return PortClassification(
+                category: .other,
+                displayName: "VS Code Extension Host",
+                reason: "Local extension service managed by Visual Studio Code",
+                applicationBundlePath: bundlePath
+            )
+        }
+
+        if executablePath.contains("/cursor.app/contents/resources/app/extensions/"),
+           let bundlePath = applicationBundlePath(matching: "cursor.app", in: paths) {
+            return PortClassification(
+                category: .other,
+                displayName: "Cursor Extension Host",
+                reason: "Local extension service managed by Cursor",
+                applicationBundlePath: bundlePath
+            )
+        }
+
+        return nil
+    }
+
+    private static func executionPaths(for entry: PortEntry) -> [String] {
+        [entry.executablePath].compactMap { $0 } + entry.ancestorExecutablePaths
+    }
+
+    private static func applicationBundlePath(
+        matching applicationName: String,
+        in paths: [String]
+    ) -> String? {
+        paths.lazy
+            .filter { $0.localizedCaseInsensitiveContains(applicationName) }
+            .compactMap { applicationBundlePath(in: $0) }
+            .first
+    }
+
+    private static func applicationBundlePath(in executablePath: String?) -> String? {
+        guard let executablePath,
+              let appRange = executablePath.range(of: ".app", options: .caseInsensitive) else {
             return nil
         }
 
-        let markers: [(path: String, iconName: String?)] = [
-            ("/application support/zed/external_agents/", nil),
-            ("/.local/share/uv/tools/serena-agent/", nil),
-            ("/codex-acp/", "openai"),
-            ("/visual studio code.app/contents/resources/app/extensions/", "vscode"),
-            ("/cursor.app/contents/resources/app/extensions/", nil),
-            ("/dia.app/contents/resources/agent-server-resources/", nil),
-            ("/figmaagent.app/contents/", "figma")
-        ]
-
-        guard let match = markers.first(where: { path.contains($0.path) }) else {
-            return nil
-        }
-
-        return Service(category: .other, name: "Editor helper", iconName: match.iconName)
+        return String(executablePath[..<appRange.upperBound])
     }
 
     private static func isSystemExecutable(_ executablePath: String?) -> Bool {

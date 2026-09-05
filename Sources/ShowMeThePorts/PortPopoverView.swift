@@ -371,6 +371,11 @@ private struct ServiceIconView: View {
     }
 
     private var brandImage: NSImage? {
+        if let applicationBundlePath = classification.applicationBundlePath,
+           FileManager.default.fileExists(atPath: applicationBundlePath) {
+            return NSWorkspace.shared.icon(forFile: applicationBundlePath)
+        }
+
         guard let iconName = classification.iconName else {
             return nil
         }

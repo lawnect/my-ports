@@ -1,5 +1,6 @@
 "action.clear" = "مسح";
 "action.kill_process" = "إنهاء %@ (PID %lld)";
+"action.open_in_browser" = "انقر نقرًا مزدوجًا لفتح %@";
 "action.quit" = "إنهاء";
 "action.refresh" = "تحديث";
 "app.name" = "My Ports";

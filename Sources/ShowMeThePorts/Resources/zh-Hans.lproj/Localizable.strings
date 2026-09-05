@@ -1,5 +1,6 @@
 "action.clear" = "清除";
 "action.kill_process" = "终止 %@（PID %lld）";
+"action.open_in_browser" = "双击以打开 %@";
 "action.quit" = "退出";
 "action.refresh" = "刷新";
 "app.name" = "My Ports";

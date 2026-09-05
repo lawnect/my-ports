@@ -1,5 +1,6 @@
 "action.clear" = "Очистить";
 "action.kill_process" = "Завершить %@ (PID %lld)";
+"action.open_in_browser" = "Дважды нажмите, чтобы открыть %@";
 "action.quit" = "Выйти";
 "action.refresh" = "Обновить";
 "app.name" = "My Ports";

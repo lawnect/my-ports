@@ -1,3 +1,4 @@
+import Foundation
 import XCTest
 @testable import ShowMeThePortsCore
 
@@ -98,5 +99,52 @@ final class LsofPortScannerTests: XCTestCase {
             result.ancestorExecutablePaths,
             ["/Users/dev/.cargo/bin/cargo", "/bin/zsh"]
         )
+    }
+
+    func testBrowserURLUsesLocalhostForWildcardAddresses() {
+        XCTAssertEqual(
+            browserURL(endpoint: "*:3000", port: 3000)?.absoluteString,
+            "http://localhost:3000/"
+        )
+        XCTAssertEqual(
+            browserURL(endpoint: "0.0.0.0:8080", port: 8080)?.absoluteString,
+            "http://localhost:8080/"
+        )
+        XCTAssertEqual(
+            browserURL(endpoint: "[::]:5173", port: 5173)?.absoluteString,
+            "http://localhost:5173/"
+        )
+    }
+
+    func testBrowserURLPreservesSpecificIPv4AndIPv6Addresses() {
+        XCTAssertEqual(
+            browserURL(endpoint: "127.0.0.1:8000", port: 8000)?.absoluteString,
+            "http://127.0.0.1:8000/"
+        )
+        XCTAssertEqual(
+            browserURL(endpoint: "[::1]:5273", port: 5273)?.absoluteString,
+            "http://[::1]:5273/"
+        )
+    }
+
+    func testBrowserURLUsesHTTPSForCommonSecureDevelopmentPorts() {
+        XCTAssertEqual(
+            browserURL(endpoint: "*:443", port: 443)?.absoluteString,
+            "https://localhost:443/"
+        )
+        XCTAssertEqual(
+            browserURL(endpoint: "localhost:8443", port: 8443)?.absoluteString,
+            "https://localhost:8443/"
+        )
+    }
+
+    private func browserURL(endpoint: String, port: Int) -> URL? {
+        PortEntry(
+            processName: "server",
+            pid: 100,
+            port: port,
+            protocolName: "TCP",
+            endpoint: endpoint
+        ).browserURL
     }
 }

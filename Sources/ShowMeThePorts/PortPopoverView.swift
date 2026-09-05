@@ -766,46 +766,53 @@ private struct PortRowView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            ServiceIconView(classification: classification)
+            HStack(spacing: 12) {
+                ServiceIconView(classification: classification)
 
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 6) {
-                    Text(String(entry.port))
-                        .font(.system(.title3, design: .monospaced).weight(.semibold))
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 6) {
+                        Text(String(entry.port))
+                            .font(.system(.title3, design: .monospaced).weight(.semibold))
 
-                    Text(entry.protocolName)
+                        Text(entry.protocolName)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    HStack(spacing: 5) {
+                        Text(L10n.localizedProcessName(entry.processName))
+                            .font(.subheadline)
+                            .lineLimit(1)
+
+                        Text("·")
+                            .foregroundStyle(.tertiary)
+
+                        Text(L10n.classificationName(classification.displayName))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .help(L10n.classificationReason(classification.reason))
+                    }
+                }
+
+                Spacer(minLength: 12)
+
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text(L10n.pid(entry.pid))
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(.secondary)
+
+                    Text(entry.endpoint)
                         .font(.caption2)
-                        .foregroundStyle(.secondary)
-                }
-
-                HStack(spacing: 5) {
-                    Text(L10n.localizedProcessName(entry.processName))
-                        .font(.subheadline)
-                        .lineLimit(1)
-
-                    Text("·")
                         .foregroundStyle(.tertiary)
-
-                    Text(L10n.classificationName(classification.displayName))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
                         .lineLimit(1)
-                        .help(L10n.classificationReason(classification.reason))
                 }
             }
-
-            Spacer(minLength: 12)
-
-            VStack(alignment: .trailing, spacing: 4) {
-                Text(L10n.pid(entry.pid))
-                    .font(.system(.caption, design: .monospaced))
-                    .foregroundStyle(.secondary)
-
-                Text(entry.endpoint)
-                    .font(.caption2)
-                    .foregroundStyle(.tertiary)
-                    .lineLimit(1)
+            .contentShape(Rectangle())
+            .onTapGesture(count: 2) {
+                openInBrowser()
             }
+            .help(L10n.openInBrowserHelp(entry.browserURL?.absoluteString ?? ""))
 
             Button(role: protectionReason == nil ? .destructive : nil) {
                 if protectionReason == nil {
@@ -863,6 +870,14 @@ private struct PortRowView: View {
                 )
             }
         }
+    }
+
+    private func openInBrowser() {
+        guard let url = entry.browserURL else {
+            return
+        }
+
+        NSWorkspace.shared.open(url)
     }
 }
 

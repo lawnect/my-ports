@@ -104,6 +104,10 @@ enum L10n {
         format("action.kill_process", localizedProcessName(processName), Int64(pid))
     }
 
+    static func openInBrowserHelp(_ url: String) -> String {
+        format("action.open_in_browser", fallback: "Double-click to open %@", url)
+    }
+
     static func protectedProcessHelp(processName: String, pid: Int32) -> String {
         format("action.protected_process", localizedProcessName(processName), Int64(pid))
     }

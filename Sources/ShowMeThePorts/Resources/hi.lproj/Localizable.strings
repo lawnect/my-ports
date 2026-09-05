@@ -1,5 +1,6 @@
 "action.clear" = "साफ़ करें";
 "action.kill_process" = "%@ (PID %lld) को समाप्त करें";
+"action.open_in_browser" = "%@ खोलने के लिए डबल-क्लिक करें";
 "action.quit" = "बंद करें";
 "action.refresh" = "रीफ़्रेश करें";
 "app.name" = "My Ports";

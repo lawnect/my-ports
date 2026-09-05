@@ -3,6 +3,7 @@
 "action.clear" = "지우기";
 "action.quit" = "종료";
 "action.kill_process" = "%@ (PID %lld) 강제 종료";
+"action.open_in_browser" = "더블클릭하여 %@ 열기";
 "label.filter" = "필터";
 "label.port" = "포트";
 "filter.web" = "웹";

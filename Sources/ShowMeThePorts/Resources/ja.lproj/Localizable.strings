@@ -1,5 +1,6 @@
 "action.clear" = "消去";
 "action.kill_process" = "%@（PID %lld）を強制終了";
+"action.open_in_browser" = "ダブルクリックして%@を開く";
 "action.quit" = "終了";
 "action.refresh" = "更新";
 "app.name" = "My Ports";

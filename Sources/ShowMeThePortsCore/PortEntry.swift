@@ -19,6 +19,19 @@ public struct PortEntry: Identifiable, Hashable, Sendable {
         DevelopmentPortFilter.classify(self)
     }
 
+    public var browserURL: URL? {
+        guard (1...65_535).contains(port) else {
+            return nil
+        }
+
+        var components = URLComponents()
+        components.scheme = [443, 8443, 9443].contains(port) ? "https" : "http"
+        components.host = browserHost
+        components.port = port
+        components.path = "/"
+        return components.url
+    }
+
     public init(
         processName: String,
         pid: Int32,
@@ -39,5 +52,26 @@ public struct PortEntry: Identifiable, Hashable, Sendable {
         self.userID = userID
         self.executablePath = executablePath
         self.ancestorExecutablePaths = ancestorExecutablePaths
+    }
+
+    private var browserHost: String {
+        let address = endpoint
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .split(whereSeparator: \.isWhitespace)
+            .first
+            .map(String.init) ?? ""
+        let portSuffix = ":\(port)"
+
+        guard address.hasSuffix(portSuffix) else {
+            return "localhost"
+        }
+
+        let host = String(address.dropLast(portSuffix.count))
+
+        if host.isEmpty || ["*", "0.0.0.0", "::", "[::]"].contains(host) {
+            return "localhost"
+        }
+
+        return host
     }
 }

@@ -3,6 +3,7 @@
 "action.clear" = "Clear";
 "action.quit" = "Quit";
 "action.kill_process" = "Kill %@ (PID %lld)";
+"action.open_in_browser" = "Double-click to open %@";
 "label.filter" = "Filter";
 "label.port" = "Port";
 "filter.web" = "Web";

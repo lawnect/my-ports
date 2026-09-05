@@ -105,3 +105,13 @@
 "confirmation.kill.message" = "確定要終止正在監聽連接埠 %3$lld 的 %1$@（PID %2$lld）嗎？";
 "search.placeholder" = "搜尋連接埠、服務或位址";
 "classification.name.Erlang / BEAM runtime" = "Erlang / BEAM 執行環境";
+"action.ok" = "好";
+"action.protected_process" = "查看 %@（PID %lld）受保護的原因";
+"protected.title" = "受保護的程序";
+"protected.message" = "My Ports 不會終止 %@（PID %lld）。\n\n%@";
+"protected.reason.core_system" = "這是 macOS 核心程序。";
+"protected.reason.current_application" = "My Ports 無法終止自身，請使用結束選單。";
+"protected.reason.macos_service" = "此監聽程序屬於 macOS，請在系統設定或對應服務中停止。";
+"protected.reason.unknown_owner" = "無法驗證程序擁有者。";
+"protected.reason.administrator_owned" = "此程序由管理員擁有，請從對應 App 或服務管理器中停止。";
+"protected.reason.another_user" = "此程序屬於其他使用者。My Ports 只終止目前使用者的程序。";

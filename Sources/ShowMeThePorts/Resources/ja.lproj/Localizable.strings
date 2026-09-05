@@ -105,3 +105,13 @@
 "confirmation.kill.message" = "ポート %3$lld で待機中の %1$@（PID %2$lld）を終了してもよろしいですか？";
 "search.placeholder" = "ポート、サービス、アドレスを検索";
 "classification.name.Erlang / BEAM runtime" = "Erlang / BEAMランタイム";
+"action.ok" = "OK";
+"action.protected_process" = "%@（PID %lld）が保護されている理由";
+"protected.title" = "保護されたプロセス";
+"protected.message" = "My Portsは%@（PID %lld）を終了しません。\n\n%@";
+"protected.reason.core_system" = "これはmacOSの中核プロセスです。";
+"protected.reason.current_application" = "My Portsは自身を終了できません。代わりに終了メニューを使用してください。";
+"protected.reason.macos_service" = "このリスナーはmacOSに属します。システム設定または所有するサービスから停止してください。";
+"protected.reason.unknown_owner" = "プロセスの所有者を確認できませんでした。";
+"protected.reason.administrator_owned" = "管理者が所有するプロセスです。アプリまたはサービス管理画面から停止してください。";
+"protected.reason.another_user" = "別のユーザーが所有するプロセスです。My Portsは現在のユーザーのプロセスだけを終了します。";

@@ -107,3 +107,13 @@
 "confirmation.kill.message" = "Are you sure you want to terminate %@ (PID %lld), listening on port %lld?";
 "search.placeholder" = "Search ports, services, or addresses";
 "classification.name.Erlang / BEAM runtime" = "Erlang / BEAM runtime";
+"action.ok" = "OK";
+"action.protected_process" = "Why %@ (PID %lld) is protected";
+"protected.title" = "Protected Process";
+"protected.message" = "My Ports won’t terminate %@ (PID %lld).\n\n%@";
+"protected.reason.core_system" = "This is a core macOS process.";
+"protected.reason.current_application" = "My Ports can’t terminate itself. Use Quit instead.";
+"protected.reason.macos_service" = "This listener belongs to macOS. Stop it from System Settings or its owning service.";
+"protected.reason.unknown_owner" = "The process owner couldn’t be verified.";
+"protected.reason.administrator_owned" = "This process is owned by an administrator. Stop it from its app or service manager.";
+"protected.reason.another_user" = "This process belongs to another user. My Ports only terminates your own processes.";

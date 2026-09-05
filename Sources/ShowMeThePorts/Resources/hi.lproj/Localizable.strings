@@ -105,3 +105,13 @@
 "confirmation.kill.message" = "क्या आप पोर्ट %3$lld पर सुन रहे %1$@ (PID %2$lld) को समाप्त करना चाहते हैं?";
 "search.placeholder" = "पोर्ट, सेवाएँ या पते खोजें";
 "classification.name.Erlang / BEAM runtime" = "Erlang / BEAM रनटाइम";
+"action.ok" = "ठीक है";
+"action.protected_process" = "%@ (PID %lld) सुरक्षित क्यों है";
+"protected.title" = "सुरक्षित प्रोसेस";
+"protected.message" = "My Ports %@ (PID %lld) को समाप्त नहीं करेगा।\n\n%@";
+"protected.reason.core_system" = "यह macOS का मुख्य प्रोसेस है।";
+"protected.reason.current_application" = "My Ports स्वयं को समाप्त नहीं कर सकता। इसके बजाय Quit का उपयोग करें।";
+"protected.reason.macos_service" = "यह लिसनर macOS का है। इसे System Settings या संबंधित सेवा से रोकें।";
+"protected.reason.unknown_owner" = "प्रोसेस के मालिक की पुष्टि नहीं हो सकी।";
+"protected.reason.administrator_owned" = "यह प्रोसेस व्यवस्थापक का है। इसे संबंधित ऐप या सेवा प्रबंधक से रोकें।";
+"protected.reason.another_user" = "यह प्रोसेस किसी अन्य उपयोगकर्ता का है। My Ports केवल आपके प्रोसेस समाप्त करता है।";

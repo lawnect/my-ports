@@ -1,4 +1,5 @@
 import Foundation
+import ShowMeThePortsCore
 
 enum AppResources {
     static var bundle: Bundle {
@@ -16,6 +17,7 @@ enum L10n {
     static var settings: String { string("action.settings") }
     static var cancel: String { string("action.cancel") }
     static var terminate: String { string("action.terminate") }
+    static var ok: String { string("action.ok") }
     static var filter: String { string("label.filter") }
     static var port: String { string("label.port") }
     static var searchPlaceholder: String { string("search.placeholder") }
@@ -33,6 +35,7 @@ enum L10n {
         string("status.launch_at_login_requires_approval")
     }
     static var terminateProcessTitle: String { string("confirmation.kill.title") }
+    static var protectedProcessTitle: String { string("protected.title") }
 
     static func filterName(_ mode: PortFilterMode) -> String {
         switch mode {
@@ -52,6 +55,34 @@ enum L10n {
 
     static func killHelp(processName: String, pid: Int32) -> String {
         format("action.kill_process", localizedProcessName(processName), Int64(pid))
+    }
+
+    static func protectedProcessHelp(processName: String, pid: Int32) -> String {
+        format("action.protected_process", localizedProcessName(processName), Int64(pid))
+    }
+
+    static func protectedProcessMessage(
+        processName: String,
+        pid: Int32,
+        reason: ProcessProtectionReason
+    ) -> String {
+        format(
+            "protected.message",
+            localizedProcessName(processName),
+            Int64(pid),
+            protectionReason(reason)
+        )
+    }
+
+    static func protectionReason(_ reason: ProcessProtectionReason) -> String {
+        switch reason {
+        case .coreSystemProcess: string("protected.reason.core_system")
+        case .currentApplication: string("protected.reason.current_application")
+        case .macOSService: string("protected.reason.macos_service")
+        case .unknownOwner: string("protected.reason.unknown_owner")
+        case .administratorOwned: string("protected.reason.administrator_owned")
+        case .anotherUser: string("protected.reason.another_user")
+        }
     }
 
     static func launchAtLoginError(_ message: String) -> String {

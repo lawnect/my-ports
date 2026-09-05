@@ -105,3 +105,13 @@
 "confirmation.kill.message" = "Завершить %@ (PID %lld), прослушивающий порт %lld?";
 "search.placeholder" = "Поиск портов, служб или адресов";
 "classification.name.Erlang / BEAM runtime" = "Среда выполнения Erlang / BEAM";
+"action.ok" = "ОК";
+"action.protected_process" = "Почему %@ (PID %lld) защищён";
+"protected.title" = "Защищённый процесс";
+"protected.message" = "My Ports не будет завершать %@ (PID %lld).\n\n%@";
+"protected.reason.core_system" = "Это основной процесс macOS.";
+"protected.reason.current_application" = "My Ports не может завершить себя. Используйте команду выхода.";
+"protected.reason.macos_service" = "Этот процесс принадлежит macOS. Остановите его в Системных настройках или управляющей службе.";
+"protected.reason.unknown_owner" = "Не удалось проверить владельца процесса.";
+"protected.reason.administrator_owned" = "Процесс принадлежит администратору. Остановите его в приложении или диспетчере служб.";
+"protected.reason.another_user" = "Процесс принадлежит другому пользователю. My Ports завершает только ваши процессы.";

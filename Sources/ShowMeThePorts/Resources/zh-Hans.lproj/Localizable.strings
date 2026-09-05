@@ -105,3 +105,13 @@
 "confirmation.kill.message" = "确定要终止正在监听端口 %3$lld 的 %1$@（PID %2$lld）吗？";
 "search.placeholder" = "搜索端口、服务或地址";
 "classification.name.Erlang / BEAM runtime" = "Erlang / BEAM 运行时";
+"action.ok" = "好";
+"action.protected_process" = "查看 %@（PID %lld）受保护的原因";
+"protected.title" = "受保护的进程";
+"protected.message" = "My Ports 不会终止 %@（PID %lld）。\n\n%@";
+"protected.reason.core_system" = "这是 macOS 核心进程。";
+"protected.reason.current_application" = "My Ports 无法终止自身，请使用退出菜单。";
+"protected.reason.macos_service" = "此监听进程属于 macOS，请在系统设置或对应服务中停止。";
+"protected.reason.unknown_owner" = "无法验证进程所有者。";
+"protected.reason.administrator_owned" = "此进程由管理员拥有，请从对应应用或服务管理器中停止。";
+"protected.reason.another_user" = "此进程属于其他用户。My Ports 只终止当前用户的进程。";

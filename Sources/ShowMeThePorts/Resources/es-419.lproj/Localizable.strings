@@ -105,3 +105,13 @@
 "confirmation.kill.message" = "¿Seguro que quieres finalizar %@ (PID %lld), que escucha en el puerto %lld?";
 "search.placeholder" = "Buscar puertos, servicios o direcciones";
 "classification.name.Erlang / BEAM runtime" = "Entorno de ejecución Erlang / BEAM";
+"action.ok" = "Aceptar";
+"action.protected_process" = "Por qué está protegido %@ (PID %lld)";
+"protected.title" = "Proceso protegido";
+"protected.message" = "My Ports no finalizará %@ (PID %lld).\n\n%@";
+"protected.reason.core_system" = "Es un proceso esencial de macOS.";
+"protected.reason.current_application" = "My Ports no puede finalizarse a sí mismo. Usa Salir.";
+"protected.reason.macos_service" = "Este proceso pertenece a macOS. Detenlo desde Configuración del Sistema o desde su servicio.";
+"protected.reason.unknown_owner" = "No se pudo verificar el propietario del proceso.";
+"protected.reason.administrator_owned" = "Este proceso pertenece a un administrador. Detenlo desde su aplicación o administrador de servicios.";
+"protected.reason.another_user" = "Este proceso pertenece a otro usuario. My Ports solo finaliza tus propios procesos.";

@@ -1,3 +1,4 @@
+import Darwin
 import Foundation
 import ShowMeThePortsCore
 
@@ -26,13 +27,19 @@ final class PortListViewModel: ObservableObject {
     private let killer: ProcessPortKiller
     private var lastUpdated: Date?
     private var isRefreshing = false
+    private let currentUserID: UInt32
+    private let currentProcessID: Int32
 
     init(
         scanner: LsofPortScanner = LsofPortScanner(),
-        killer: ProcessPortKiller = ProcessPortKiller()
+        killer: ProcessPortKiller = ProcessPortKiller(),
+        currentUserID: UInt32 = getuid(),
+        currentProcessID: Int32 = getpid()
     ) {
         self.scanner = scanner
         self.killer = killer
+        self.currentUserID = currentUserID
+        self.currentProcessID = currentProcessID
     }
 
     var ports: [PortEntry] {
@@ -223,7 +230,19 @@ final class PortListViewModel: ObservableObject {
 
     }
 
+    func protectionReason(for entry: PortEntry) -> ProcessProtectionReason? {
+        ProcessTerminationPolicy.protectionReason(
+            for: entry,
+            currentUserID: currentUserID,
+            currentProcessID: currentProcessID
+        )
+    }
+
     func kill(_ entry: PortEntry) async {
+        guard protectionReason(for: entry) == nil else {
+            return
+        }
+
         killingPIDs.insert(entry.pid)
         errorMessage = nil
 

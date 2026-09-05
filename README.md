@@ -95,5 +95,5 @@ make launch
 - Process identity takes precedence over a conventional port, and ambiguous matches are labeled in the UI with their classification reason available on hover.
 - Executable paths identify compiled Rust, Go, SwiftPM, Node module, and Python virtual-environment processes without retaining full command-line arguments.
 - Use `All` to inspect every listening port.
-- Process termination uses `/bin/kill -9 <PID>`.
+- Process termination uses `/bin/kill -9 <PID>` only for verified processes owned by the current user. Administrator, other-user, macOS, and unknown-owner processes are protected in the UI.
 - The UI is an `NSStatusBar` item backed by an `NSPopover` with SwiftUI content.

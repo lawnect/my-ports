@@ -105,3 +105,13 @@
 "confirmation.kill.message" = "هل تريد بالتأكيد إنهاء %1$@ (PID %2$lld) الذي يستمع على المنفذ %3$lld؟";
 "search.placeholder" = "البحث في المنافذ أو الخدمات أو العناوين";
 "classification.name.Erlang / BEAM runtime" = "بيئة تشغيل Erlang / BEAM";
+"action.ok" = "موافق";
+"action.protected_process" = "سبب حماية %@ (PID %lld)";
+"protected.title" = "عملية محمية";
+"protected.message" = "لن ينهي My Ports العملية %1$@ (PID %2$lld).\n\n%3$@";
+"protected.reason.core_system" = "هذه عملية أساسية في macOS.";
+"protected.reason.current_application" = "لا يمكن لـ My Ports إنهاء نفسه. استخدم أمر الإنهاء بدلاً من ذلك.";
+"protected.reason.macos_service" = "عملية الاستماع هذه تابعة لـ macOS. أوقفها من إعدادات النظام أو من الخدمة المالكة.";
+"protected.reason.unknown_owner" = "تعذر التحقق من مالك العملية.";
+"protected.reason.administrator_owned" = "هذه العملية مملوكة لمسؤول. أوقفها من التطبيق أو مدير الخدمات.";
+"protected.reason.another_user" = "هذه العملية مملوكة لمستخدم آخر. ينهي My Ports عملياتك فقط.";

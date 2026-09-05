@@ -113,6 +113,7 @@ struct PortPopoverView: View {
                 PortRowView(
                     entry: entry,
                     isKilling: viewModel.killingPIDs.contains(entry.pid),
+                    protectionReason: viewModel.protectionReason(for: entry),
                     onKill: {
                         Task {
                             await viewModel.kill(entry)
@@ -229,8 +230,10 @@ private struct PortSearchField: NSViewRepresentable {
 private struct PortRowView: View {
     let entry: PortEntry
     let isKilling: Bool
+    let protectionReason: ProcessProtectionReason?
     let onKill: () -> Void
     @State private var isShowingKillConfirmation = false
+    @State private var isShowingProtectionExplanation = false
 
     private var classification: PortClassification {
         entry.classification
@@ -279,19 +282,29 @@ private struct PortRowView: View {
                     .lineLimit(1)
             }
 
-            Button(role: .destructive) {
-                isShowingKillConfirmation = true
+            Button(role: protectionReason == nil ? .destructive : nil) {
+                if protectionReason == nil {
+                    isShowingKillConfirmation = true
+                } else {
+                    isShowingProtectionExplanation = true
+                }
             } label: {
                 if isKilling {
                     ProgressView()
                         .controlSize(.small)
+                } else if protectionReason != nil {
+                    Image(systemName: "lock.shield.fill")
                 } else {
                     Image(systemName: "xmark.circle.fill")
                 }
             }
             .buttonStyle(.borderless)
             .disabled(isKilling)
-            .help(L10n.killHelp(processName: entry.processName, pid: entry.pid))
+            .help(
+                protectionReason == nil
+                    ? L10n.killHelp(processName: entry.processName, pid: entry.pid)
+                    : L10n.protectedProcessHelp(processName: entry.processName, pid: entry.pid)
+            )
         }
         .padding(.vertical, 4)
         .alert(
@@ -308,6 +321,22 @@ private struct PortRowView: View {
                     port: entry.port
                 )
             )
+        }
+        .alert(
+            L10n.protectedProcessTitle,
+            isPresented: $isShowingProtectionExplanation
+        ) {
+            Button(L10n.ok) {}
+        } message: {
+            if let protectionReason {
+                Text(
+                    L10n.protectedProcessMessage(
+                        processName: entry.processName,
+                        pid: entry.pid,
+                        reason: protectionReason
+                    )
+                )
+            }
         }
     }
 }

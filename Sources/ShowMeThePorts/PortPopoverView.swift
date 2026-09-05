@@ -6,6 +6,7 @@ struct PortPopoverView: View {
     @ObservedObject var viewModel: PortListViewModel
     @StateObject private var launchAtLogin = LaunchAtLoginController()
     let onQuit: () -> Void
+    let onSettingsMenuClosed: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -50,29 +51,15 @@ struct PortPopoverView: View {
 
                 Spacer(minLength: 8)
 
-                Menu {
-                    Toggle(
-                        L10n.launchAtLogin,
-                        isOn: Binding(
-                            get: { launchAtLogin.isEnabled },
-                            set: { isEnabled in
-                                launchAtLogin.setEnabled(isEnabled)
-                            }
-                        )
-                    )
-
-                    Divider()
-
-                    Button(L10n.quit, role: .destructive, action: onQuit)
-                        .keyboardShortcut("q")
-                } label: {
-                    Label(L10n.settings, systemImage: "gearshape")
-                        .labelStyle(.iconOnly)
-                }
-                .menuStyle(.borderlessButton)
-                .menuIndicator(.hidden)
-                .fixedSize()
-                .help(L10n.settings)
+                SettingsMenuButton(
+                    isLaunchAtLoginEnabled: launchAtLogin.isEnabled,
+                    onToggleLaunchAtLogin: { isEnabled in
+                        launchAtLogin.setEnabled(isEnabled)
+                    },
+                    onQuit: onQuit,
+                    onMenuClosed: onSettingsMenuClosed
+                )
+                .frame(width: 24, height: 24)
             }
         }
         .frame(maxWidth: .infinity)
@@ -182,6 +169,107 @@ struct PortPopoverView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
+    }
+}
+
+private struct SettingsMenuButton: NSViewRepresentable {
+    let isLaunchAtLoginEnabled: Bool
+    let onToggleLaunchAtLogin: (Bool) -> Void
+    let onQuit: () -> Void
+    let onMenuClosed: () -> Void
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    func makeNSView(context: Context) -> NSButton {
+        let button = NSButton()
+        button.image = NSImage(
+            systemSymbolName: "gearshape",
+            accessibilityDescription: L10n.settings
+        )
+        button.imagePosition = .imageOnly
+        button.imageScaling = .scaleProportionallyDown
+        button.isBordered = false
+        button.toolTip = L10n.settings
+        button.setAccessibilityLabel(L10n.settings)
+        button.target = context.coordinator
+        button.action = #selector(Coordinator.showMenu(_:))
+        return button
+    }
+
+    func updateNSView(_ button: NSButton, context: Context) {
+        context.coordinator.parent = self
+        button.toolTip = L10n.settings
+        button.setAccessibilityLabel(L10n.settings)
+    }
+
+    @MainActor
+    final class Coordinator: NSObject, NSMenuDelegate {
+        var parent: SettingsMenuButton
+        private var activeMenu: NSMenu?
+
+        init(_ parent: SettingsMenuButton) {
+            self.parent = parent
+        }
+
+        @objc func showMenu(_ sender: NSButton) {
+            let menu = NSMenu()
+            menu.autoenablesItems = false
+            menu.minimumWidth = 230
+            menu.delegate = self
+
+            let launchAtLoginItem = NSMenuItem(
+                title: L10n.launchAtLogin,
+                action: #selector(toggleLaunchAtLogin(_:)),
+                keyEquivalent: ""
+            )
+            launchAtLoginItem.target = self
+            launchAtLoginItem.state = parent.isLaunchAtLoginEnabled ? .on : .off
+            menu.addItem(launchAtLoginItem)
+            menu.addItem(.separator())
+
+            let quitItem = NSMenuItem(
+                title: L10n.quit,
+                action: #selector(quit(_:)),
+                keyEquivalent: "q"
+            )
+            quitItem.target = self
+            quitItem.keyEquivalentModifierMask = .command
+            menu.addItem(quitItem)
+
+            activeMenu = menu
+            menu.update()
+            let menuSize = menu.size
+            menu.popUp(
+                positioning: nil,
+                at: NSPoint(
+                    x: sender.bounds.maxX + 8,
+                    y: sender.bounds.minY - menuSize.height - 6
+                ),
+                in: sender
+            )
+        }
+
+        @objc private func toggleLaunchAtLogin(_ sender: NSMenuItem) {
+            parent.onToggleLaunchAtLogin(!parent.isLaunchAtLoginEnabled)
+        }
+
+        @objc private func quit(_ sender: NSMenuItem) {
+            parent.onQuit()
+        }
+
+        func menuDidClose(_ menu: NSMenu) {
+            guard menu === activeMenu else {
+                return
+            }
+
+            activeMenu = nil
+            let onMenuClosed = parent.onMenuClosed
+            DispatchQueue.main.async {
+                onMenuClosed()
+            }
+        }
     }
 }
 

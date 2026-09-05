@@ -16,13 +16,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         configureStatusItem()
         configurePopover()
-        observeMenuTracking()
         startAutoRefresh()
     }
 
     func applicationWillTerminate(_ notification: Notification) {
         autoRefreshTask?.cancel()
-        NotificationCenter.default.removeObserver(self)
     }
 
     private func configureStatusItem() {
@@ -46,34 +44,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         popover.contentViewController = NSHostingController(
             rootView: PortPopoverView(
                 viewModel: viewModel,
-                onQuit: { NSApp.terminate(nil) }
+                onQuit: { NSApp.terminate(nil) },
+                onSettingsMenuClosed: { [weak self] in
+                    self?.popover.close()
+                }
             )
         )
-    }
-
-    private func observeMenuTracking() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(menuDidEndTracking(_:)),
-            name: NSMenu.didEndTrackingNotification,
-            object: nil
-        )
-    }
-
-    @objc private func menuDidEndTracking(_ notification: Notification) {
-        guard popover.isShown,
-              let popoverWindow = popover.contentViewController?.view.window,
-              !popoverWindow.frame.contains(NSEvent.mouseLocation) else {
-            return
-        }
-
-        DispatchQueue.main.async { [weak self] in
-            guard let self, self.popover.isShown else {
-                return
-            }
-
-            self.popover.performClose(nil)
-        }
     }
 
     private func startAutoRefresh() {

@@ -90,11 +90,11 @@ make launch
 ## Implementation Notes
 
 - Port discovery uses `lsof` for TCP listeners, parent PIDs, and user IDs, then enriches them with executable paths and bounded ancestry from `ps`.
-- The default `Web` filter combines known web ports with recognized server processes.
-- Use `Dev` to include classified databases, caches, containers, mobile tools, and development runtimes.
+- `All` always shows every listening port. The default saved `Dev` filter includes web servers, databases, caches, messaging services, containers, mobile tools, and development runtimes.
+- Create and edit saved filters from the `+` button. Filters can combine service categories, process or app names, owner, termination status, local/network exposure, and a port range.
+- Filter rules are persisted between launches. Up to two saved filters can be pinned beside `All` for quick access; additional filters remain available in the filter manager.
 - Process identity takes precedence over a conventional port, and ambiguous matches are labeled in the UI with their classification reason available on hover.
 - Executable paths identify compiled Rust, Go, SwiftPM, Node module, and Python virtual-environment processes without retaining full command-line arguments.
 - Bundled application paths and process ancestry distinguish Dia, Serena, Codex, Zed, Figma, Tailscale, VS Code, and Cursor helpers; installed application icons are used when available.
-- Use `All` to inspect every listening port.
 - Process termination uses `/bin/kill -9 <PID>` only for verified processes owned by the current user. Administrator, other-user, macOS, and unknown-owner processes are protected in the UI.
 - The UI is an `NSStatusBar` item backed by an `NSPopover` with SwiftUI content.

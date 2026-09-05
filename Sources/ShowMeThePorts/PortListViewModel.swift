@@ -2,24 +2,13 @@ import Darwin
 import Foundation
 import ShowMeThePortsCore
 
-enum PortFilterMode: CaseIterable, Identifiable {
-    case all
-    case web
-    case development
-
-    var id: Self { self }
-
-    var displayName: String {
-        L10n.filterName(self)
-    }
-}
-
 @MainActor
 final class PortListViewModel: ObservableObject {
     @Published private var allPorts: [PortEntry] = []
     @Published private(set) var isLoading = false
     @Published private(set) var killingPIDs = Set<Int32>()
-    @Published var filterMode: PortFilterMode = .all
+    @Published private(set) var savedFilters: [SavedPortFilter]
+    @Published private(set) var selectedFilterID: UUID?
     @Published var portSearchText = ""
     @Published var errorMessage: String?
 
@@ -29,30 +18,51 @@ final class PortListViewModel: ObservableObject {
     private var isRefreshing = false
     private let currentUserID: UInt32
     private let currentProcessID: Int32
+    private let userDefaults: UserDefaults
+
+    private static let savedFiltersKey = "savedPortFilters.v1"
+    private static let selectedFilterKey = "selectedPortFilterID.v1"
+    private static let maximumVisibleSavedFilters = 2
 
     init(
         scanner: LsofPortScanner = LsofPortScanner(),
         killer: ProcessPortKiller = ProcessPortKiller(),
         currentUserID: UInt32 = getuid(),
-        currentProcessID: Int32 = getpid()
+        currentProcessID: Int32 = getpid(),
+        userDefaults: UserDefaults = .standard
     ) {
         self.scanner = scanner
         self.killer = killer
         self.currentUserID = currentUserID
         self.currentProcessID = currentProcessID
+        self.userDefaults = userDefaults
+
+        if let data = userDefaults.data(forKey: Self.savedFiltersKey),
+           let filters = try? JSONDecoder().decode([SavedPortFilter].self, from: data) {
+            savedFilters = filters
+        } else {
+            savedFilters = [.development(name: L10n.string("filter.development"))]
+        }
+
+        if let selectedIDValue = userDefaults.string(forKey: Self.selectedFilterKey),
+           let selectedID = UUID(uuidString: selectedIDValue),
+           savedFilters.contains(where: { $0.id == selectedID }) {
+            selectedFilterID = selectedID
+        } else {
+            selectedFilterID = nil
+        }
     }
 
     var ports: [PortEntry] {
-        let filteredPorts: [PortEntry]
-
-        switch filterMode {
-        case .web:
-            filteredPorts = allPorts.filter(DevelopmentPortFilter.includesWebServer)
-        case .development:
-            filteredPorts = allPorts.filter(DevelopmentPortFilter.includes)
-        case .all:
-            filteredPorts = allPorts
-        }
+        let filteredPorts = selectedFilter.map { filter in
+            allPorts.filter { entry in
+                filter.matches(
+                    entry,
+                    currentUserID: currentUserID,
+                    currentProcessID: currentProcessID
+                )
+            }
+        } ?? allPorts
 
         let searchText = normalizedPortSearchText
 
@@ -65,25 +75,30 @@ final class PortListViewModel: ObservableObject {
         }
     }
 
-    var availableFilterModes: [PortFilterMode] {
-        var modes: [PortFilterMode] = [.all]
+    var visibleSavedFilters: [SavedPortFilter] {
+        var filters = savedFilters.filter(\.isPinned)
 
-        if allPorts.contains(where: { $0.classification.isWebServer }) {
-            modes.append(.web)
+        if let selectedFilter,
+           !filters.contains(where: { $0.id == selectedFilter.id }) {
+            if filters.count >= Self.maximumVisibleSavedFilters {
+                filters.removeLast()
+            }
+            filters.append(selectedFilter)
         }
 
-        if allPorts.contains(where: { entry in
-            let classification = entry.classification
-            return classification.isDevelopmentRelated && !classification.isWebServer
-        }) {
-            modes.append(.development)
-        }
-
-        return modes
+        return Array(filters.prefix(Self.maximumVisibleSavedFilters))
     }
 
-    var showsFilterPicker: Bool {
-        availableFilterModes.count > 1
+    var selectedFilter: SavedPortFilter? {
+        guard let selectedFilterID else {
+            return nil
+        }
+
+        return savedFilters.first(where: { $0.id == selectedFilterID })
+    }
+
+    var isAllFilterSelected: Bool {
+        selectedFilterID == nil
     }
 
     var footerStatus: String {
@@ -94,44 +109,38 @@ final class PortListViewModel: ObservableObject {
         let updatedText = L10n.updated(
             at: lastUpdated.formatted(date: .omitted, time: .standard)
         )
-        let searchText = normalizedPortSearchText
         let detail: String?
 
-        switch filterMode {
-        case .web:
+        if let selectedFilter {
             let hiddenCount = max(allPorts.count - ports.count, 0)
 
-            if !searchText.isEmpty {
-                detail = L10n.format("status.web_matches", Int64(ports.count))
+            if !normalizedPortSearchText.isEmpty {
+                detail = L10n.format(
+                    "status.saved_filter_matches",
+                    fallback: "%@ · %lld matches",
+                    selectedFilter.name,
+                    Int64(ports.count)
+                )
             } else if hiddenCount == 0 {
-                detail = L10n.format("status.web_count", Int64(ports.count))
+                detail = L10n.format(
+                    "status.saved_filter_count",
+                    fallback: "%@ · %lld ports",
+                    selectedFilter.name,
+                    Int64(ports.count)
+                )
             } else {
                 detail = L10n.format(
-                    "status.web_hidden",
+                    "status.saved_filter_hidden",
+                    fallback: "%@ · %lld shown · %lld hidden",
+                    selectedFilter.name,
                     Int64(ports.count),
                     Int64(hiddenCount)
                 )
             }
-        case .development:
-            let hiddenCount = max(allPorts.count - ports.count, 0)
-
-            if !searchText.isEmpty {
-                detail = L10n.format("status.development_matches", Int64(ports.count))
-            } else if hiddenCount == 0 {
-                detail = L10n.format("status.development_count", Int64(ports.count))
-            } else {
-                detail = L10n.format(
-                    "status.development_hidden",
-                    Int64(ports.count),
-                    Int64(hiddenCount)
-                )
-            }
-        case .all:
-            if !searchText.isEmpty {
-                detail = L10n.format("status.all_matches", Int64(ports.count))
-            } else {
-                detail = nil
-            }
+        } else if !normalizedPortSearchText.isEmpty {
+            detail = L10n.format("status.all_matches", Int64(ports.count))
+        } else {
+            detail = nil
         }
 
         guard let detail else {
@@ -146,14 +155,7 @@ final class PortListViewModel: ObservableObject {
             return L10n.noMatchingPorts
         }
 
-        switch filterMode {
-        case .web:
-            return L10n.noWebPorts
-        case .development:
-            return L10n.noDevelopmentPorts
-        case .all:
-            return L10n.noListeningPorts
-        }
+        return selectedFilter == nil ? L10n.noListeningPorts : L10n.noFilterMatches
     }
 
     private var normalizedPortSearchText: String {
@@ -219,8 +221,9 @@ final class PortListViewModel: ObservableObject {
         do {
             allPorts = try await scanner.listeningPorts()
 
-            if !availableFilterModes.contains(filterMode) {
-                filterMode = .all
+            if let selectedFilterID,
+               !savedFilters.contains(where: { $0.id == selectedFilterID }) {
+                selectAllFilter()
             }
 
             lastUpdated = Date()
@@ -228,6 +231,85 @@ final class PortListViewModel: ObservableObject {
             errorMessage = error.localizedDescription
         }
 
+    }
+
+    func selectAllFilter() {
+        selectedFilterID = nil
+        userDefaults.removeObject(forKey: Self.selectedFilterKey)
+    }
+
+    func selectFilter(id: UUID) {
+        guard savedFilters.contains(where: { $0.id == id }) else {
+            return
+        }
+
+        selectedFilterID = id
+        userDefaults.set(id.uuidString, forKey: Self.selectedFilterKey)
+    }
+
+    func saveFilter(_ filter: SavedPortFilter) {
+        var filter = filter
+        filter.name = filter.name.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !filter.name.isEmpty else {
+            return
+        }
+
+        if let index = savedFilters.firstIndex(where: { $0.id == filter.id }) {
+            savedFilters[index] = filter
+        } else {
+            savedFilters.append(filter)
+        }
+
+        enforcePinnedFilterLimit(preferredFilterID: filter.id)
+        persistFilters()
+        selectFilter(id: filter.id)
+    }
+
+    func deleteFilter(id: UUID) {
+        savedFilters.removeAll(where: { $0.id == id })
+
+        if selectedFilterID == id {
+            selectAllFilter()
+        }
+
+        persistFilters()
+    }
+
+    func setFilterPinned(id: UUID, isPinned: Bool) {
+        guard let index = savedFilters.firstIndex(where: { $0.id == id }) else {
+            return
+        }
+
+        savedFilters[index].isPinned = isPinned
+
+        if isPinned {
+            enforcePinnedFilterLimit(preferredFilterID: id)
+        }
+
+        persistFilters()
+    }
+
+    private func enforcePinnedFilterLimit(preferredFilterID: UUID) {
+        let pinnedIDs = savedFilters.filter(\.isPinned).map(\.id)
+        guard pinnedIDs.count > Self.maximumVisibleSavedFilters else {
+            return
+        }
+
+        let idsToKeep = [preferredFilterID] + pinnedIDs.filter { $0 != preferredFilterID }
+        let keptIDs = Set(idsToKeep.prefix(Self.maximumVisibleSavedFilters))
+
+        for index in savedFilters.indices where savedFilters[index].isPinned {
+            savedFilters[index].isPinned = keptIDs.contains(savedFilters[index].id)
+        }
+    }
+
+    private func persistFilters() {
+        guard let data = try? JSONEncoder().encode(savedFilters) else {
+            return
+        }
+
+        userDefaults.set(data, forKey: Self.savedFiltersKey)
     }
 
     func protectionReason(for entry: PortEntry) -> ProcessProtectionReason? {

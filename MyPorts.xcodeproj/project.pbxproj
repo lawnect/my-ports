@@ -25,9 +25,13 @@
 		B20000000000000000000004 /* PortEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000004 /* PortEntry.swift */; };
 		B20000000000000000000005 /* ProcessPortKiller.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000005 /* ProcessPortKiller.swift */; };
 		B20000000000000000000006 /* Shell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000006 /* Shell.swift */; };
+		B20000000000000000000007 /* ProcessTerminationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000007 /* ProcessTerminationPolicy.swift */; };
+		B20000000000000000000008 /* SavedPortFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000008 /* SavedPortFilter.swift */; };
 		B30000000000000000000001 /* DevelopmentPortFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30000000000000000000003 /* DevelopmentPortFilterTests.swift */; };
 		B30000000000000000000002 /* LsofPortScannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30000000000000000000004 /* LsofPortScannerTests.swift */; };
 		B30000000000000000000003 /* libShowMeThePortsCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F40000000000000000000002 /* libShowMeThePortsCore.a */; };
+		B30000000000000000000004 /* ProcessTerminationPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30000000000000000000005 /* ProcessTerminationPolicyTests.swift */; };
+		B30000000000000000000005 /* SavedPortFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30000000000000000000006 /* SavedPortFilterTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,9 +67,13 @@
 		F20000000000000000000004 /* PortEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortEntry.swift; sourceTree = "<group>"; };
 		F20000000000000000000005 /* ProcessPortKiller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessPortKiller.swift; sourceTree = "<group>"; };
 		F20000000000000000000006 /* Shell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shell.swift; sourceTree = "<group>"; };
+		F20000000000000000000007 /* ProcessTerminationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTerminationPolicy.swift; sourceTree = "<group>"; };
+		F20000000000000000000008 /* SavedPortFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPortFilter.swift; sourceTree = "<group>"; };
 		F30000000000000000000001 /* Info-Xcode.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Xcode.plist"; sourceTree = "<group>"; };
 		F30000000000000000000003 /* DevelopmentPortFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevelopmentPortFilterTests.swift; sourceTree = "<group>"; };
 		F30000000000000000000004 /* LsofPortScannerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LsofPortScannerTests.swift; sourceTree = "<group>"; };
+		F30000000000000000000005 /* ProcessTerminationPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTerminationPolicyTests.swift; sourceTree = "<group>"; };
+		F30000000000000000000006 /* SavedPortFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPortFilterTests.swift; sourceTree = "<group>"; };
 		F40000000000000000000001 /* My Ports.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "My Ports.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F40000000000000000000002 /* libShowMeThePortsCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libShowMeThePortsCore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F40000000000000000000003 /* ShowMeThePortsCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShowMeThePortsCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -172,6 +180,8 @@
 				F20000000000000000000003 /* PortClassification.swift */,
 				F20000000000000000000004 /* PortEntry.swift */,
 				F20000000000000000000005 /* ProcessPortKiller.swift */,
+				F20000000000000000000007 /* ProcessTerminationPolicy.swift */,
+				F20000000000000000000008 /* SavedPortFilter.swift */,
 				F20000000000000000000006 /* Shell.swift */,
 			);
 			path = ShowMeThePortsCore;
@@ -182,6 +192,8 @@
 			children = (
 				F30000000000000000000003 /* DevelopmentPortFilterTests.swift */,
 				F30000000000000000000004 /* LsofPortScannerTests.swift */,
+				F30000000000000000000005 /* ProcessTerminationPolicyTests.swift */,
+				F30000000000000000000006 /* SavedPortFilterTests.swift */,
 			);
 			path = Tests/ShowMeThePortsCoreTests;
 			sourceTree = "<group>";
@@ -353,6 +365,8 @@
 				B20000000000000000000003 /* PortClassification.swift in Sources */,
 				B20000000000000000000004 /* PortEntry.swift in Sources */,
 				B20000000000000000000005 /* ProcessPortKiller.swift in Sources */,
+				B20000000000000000000007 /* ProcessTerminationPolicy.swift in Sources */,
+				B20000000000000000000008 /* SavedPortFilter.swift in Sources */,
 				B20000000000000000000006 /* Shell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -363,6 +377,8 @@
 			files = (
 				B30000000000000000000001 /* DevelopmentPortFilterTests.swift in Sources */,
 				B30000000000000000000002 /* LsofPortScannerTests.swift in Sources */,
+				B30000000000000000000004 /* ProcessTerminationPolicyTests.swift in Sources */,
+				B30000000000000000000005 /* SavedPortFilterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -536,7 +552,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = K8R5WLB763;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -546,7 +562,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.4;
+				MARKETING_VERSION = 0.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lawnect.myports.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -561,7 +577,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 14;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = K8R5WLB763;
 				ENABLE_APP_SANDBOX = NO;
@@ -572,7 +588,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.4;
+				MARKETING_VERSION = 0.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lawnect.myports.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

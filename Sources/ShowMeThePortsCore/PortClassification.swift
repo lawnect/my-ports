@@ -1,6 +1,6 @@
 import Foundation
 
-public enum PortCategory: String, Sendable {
+public enum PortCategory: String, CaseIterable, Codable, Hashable, Sendable {
     case web
     case database
     case cache

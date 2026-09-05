@@ -2,13 +2,61 @@ import AppKit
 import SwiftUI
 import ShowMeThePortsCore
 
+private enum FilterScreen {
+    case manager
+    case editor(SavedPortFilter, isNew: Bool)
+}
+
 struct PortPopoverView: View {
     @ObservedObject var viewModel: PortListViewModel
     @StateObject private var launchAtLogin = LaunchAtLoginController()
+    @State private var filterScreen: FilterScreen?
     let onQuit: () -> Void
     let onSettingsMenuClosed: () -> Void
 
     var body: some View {
+        Group {
+            switch filterScreen {
+            case .manager:
+                FilterManagerView(
+                    filters: viewModel.savedFilters,
+                    selectedFilterID: viewModel.selectedFilterID,
+                    onBack: { filterScreen = nil },
+                    onNew: {
+                        filterScreen = .editor(
+                            SavedPortFilter(name: L10n.newFilter, isPinned: true),
+                            isNew: true
+                        )
+                    },
+                    onSelect: { id in
+                        viewModel.selectFilter(id: id)
+                        filterScreen = nil
+                    },
+                    onEdit: { filter in filterScreen = .editor(filter, isNew: false) },
+                    onSetPinned: viewModel.setFilterPinned,
+                    onDelete: viewModel.deleteFilter
+                )
+            case let .editor(filter, isNew):
+                FilterEditorView(
+                    initialFilter: filter,
+                    isNew: isNew,
+                    onCancel: { filterScreen = .manager },
+                    onSave: { filter in
+                        viewModel.saveFilter(filter)
+                        filterScreen = nil
+                    }
+                )
+            case nil:
+                portList
+            }
+        }
+        .frame(width: 420, height: 488)
+        .onAppear {
+            launchAtLogin.refreshStatus()
+        }
+    }
+
+    private var portList: some View {
         VStack(spacing: 0) {
             header
             searchBar
@@ -18,25 +66,11 @@ struct PortPopoverView: View {
             Divider()
             footer
         }
-        .frame(width: 420, height: 488)
-        .onAppear {
-            launchAtLogin.refreshStatus()
-        }
     }
 
     private var header: some View {
         ZStack {
-            if viewModel.showsFilterPicker {
-                Picker(L10n.filter, selection: $viewModel.filterMode) {
-                    ForEach(viewModel.availableFilterModes) { mode in
-                        Text(mode.displayName).tag(mode)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .controlSize(.small)
-                .fixedSize(horizontal: true, vertical: false)
-            }
+            filterBar
 
             HStack(spacing: 10) {
                 HStack(spacing: 6) {
@@ -65,6 +99,61 @@ struct PortPopoverView: View {
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
+    }
+
+    private var filterBar: some View {
+        HStack(spacing: 2) {
+            filterButton(
+                title: L10n.allFilter,
+                isSelected: viewModel.isAllFilterSelected,
+                action: viewModel.selectAllFilter
+            )
+
+            ForEach(viewModel.visibleSavedFilters) { filter in
+                filterButton(
+                    title: filter.name,
+                    isSelected: viewModel.selectedFilterID == filter.id,
+                    action: { viewModel.selectFilter(id: filter.id) }
+                )
+            }
+
+            Divider()
+                .frame(height: 18)
+
+            Button {
+                filterScreen = .manager
+            } label: {
+                Image(systemName: "plus")
+                    .frame(width: 20, height: 20)
+            }
+            .buttonStyle(.plain)
+            .help(L10n.filters)
+        }
+        .padding(3)
+        .background(.quaternary, in: RoundedRectangle(cornerRadius: 7))
+        .fixedSize(horizontal: true, vertical: false)
+    }
+
+    private func filterButton(
+        title: String,
+        isSelected: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.callout)
+                .lineLimit(1)
+                .frame(minWidth: 36, maxWidth: 72)
+                .padding(.horizontal, 5)
+                .padding(.vertical, 3)
+                .contentShape(Rectangle())
+                .foregroundStyle(isSelected ? Color.white : Color.primary)
+                .background(
+                    isSelected ? Color.accentColor : Color.clear,
+                    in: RoundedRectangle(cornerRadius: 5)
+                )
+        }
+        .buttonStyle(.plain)
     }
 
     private var searchBar: some View {
@@ -169,6 +258,354 @@ struct PortPopoverView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
+    }
+}
+
+private struct FilterManagerView: View {
+    let filters: [SavedPortFilter]
+    let selectedFilterID: UUID?
+    let onBack: () -> Void
+    let onNew: () -> Void
+    let onSelect: (UUID) -> Void
+    let onEdit: (SavedPortFilter) -> Void
+    let onSetPinned: (UUID, Bool) -> Void
+    let onDelete: (UUID) -> Void
+    @State private var filterPendingDeletion: SavedPortFilter?
+
+    var body: some View {
+        VStack(spacing: 0) {
+            navigationHeader
+            Divider()
+
+            if filters.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "line.3.horizontal.decrease.circle")
+                        .font(.system(size: 30))
+                        .foregroundStyle(.secondary)
+                    Text(L10n.noSavedFilters)
+                        .foregroundStyle(.secondary)
+                    Button(L10n.newFilter, action: onNew)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                List(filters) { filter in
+                    filterRow(filter)
+                }
+                .listStyle(.inset(alternatesRowBackgrounds: true))
+            }
+
+            Divider()
+            Text(L10n.filterPinLimit)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+        }
+        .alert(
+            L10n.deleteFilterTitle,
+            isPresented: Binding(
+                get: { filterPendingDeletion != nil },
+                set: { isPresented in
+                    if !isPresented {
+                        filterPendingDeletion = nil
+                    }
+                }
+            ),
+            presenting: filterPendingDeletion
+        ) { filter in
+            Button(L10n.cancel, role: .cancel) {}
+            Button(L10n.delete, role: .destructive) {
+                onDelete(filter.id)
+                filterPendingDeletion = nil
+            }
+        } message: { filter in
+            Text(L10n.deleteFilterMessage(filter.name))
+        }
+    }
+
+    private var navigationHeader: some View {
+        HStack {
+            Button(action: onBack) {
+                Label(L10n.back, systemImage: "chevron.left")
+            }
+            .buttonStyle(.borderless)
+
+            Spacer()
+            Text(L10n.filters)
+                .font(.headline)
+            Spacer()
+
+            Button(action: onNew) {
+                Label(L10n.newFilter, systemImage: "plus")
+                    .labelStyle(.iconOnly)
+            }
+            .buttonStyle(.borderless)
+            .help(L10n.newFilter)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+    }
+
+    private func filterRow(_ filter: SavedPortFilter) -> some View {
+        HStack(spacing: 10) {
+            Button {
+                onSelect(filter.id)
+            } label: {
+                HStack(spacing: 10) {
+                    Image(systemName: selectedFilterID == filter.id ? "checkmark.circle.fill" : "circle")
+                        .foregroundStyle(selectedFilterID == filter.id ? Color.accentColor : Color.secondary)
+
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(filter.name)
+                            .font(.body.weight(.medium))
+                            .lineLimit(1)
+                        Text(filterSummary(filter))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+
+            Spacer()
+
+            Button {
+                onSetPinned(filter.id, !filter.isPinned)
+            } label: {
+                Image(systemName: filter.isPinned ? "pin.fill" : "pin")
+            }
+            .buttonStyle(.borderless)
+            .help(filter.isPinned ? L10n.unpin : L10n.pin)
+
+            Button {
+                onEdit(filter)
+            } label: {
+                Image(systemName: "pencil")
+            }
+            .buttonStyle(.borderless)
+            .help(L10n.editFilter)
+
+            Button(role: .destructive) {
+                filterPendingDeletion = filter
+            } label: {
+                Image(systemName: "trash")
+            }
+            .buttonStyle(.borderless)
+            .help(L10n.delete)
+        }
+        .padding(.vertical, 4)
+    }
+
+    private func filterSummary(_ filter: SavedPortFilter) -> String {
+        var parts: [String] = []
+
+        if filter.categories.isEmpty {
+            parts.append(L10n.filterAnyCategories)
+        } else {
+            let names = filter.categories
+                .sorted { $0.rawValue < $1.rawValue }
+                .prefix(3)
+                .map(L10n.categoryName)
+            parts.append(names.joined(separator: ", "))
+        }
+
+        if filter.ownership != .any {
+            parts.append(L10n.ownershipName(filter.ownership))
+        }
+        if filter.termination != .any {
+            parts.append(L10n.terminationName(filter.termination))
+        }
+        if filter.exposure != .any {
+            parts.append(L10n.exposureName(filter.exposure))
+        }
+
+        return parts.joined(separator: " · ")
+    }
+}
+
+private struct FilterEditorView: View {
+    @State private var filter: SavedPortFilter
+    @State private var minimumPortText: String
+    @State private var maximumPortText: String
+    let isNew: Bool
+    let onCancel: () -> Void
+    let onSave: (SavedPortFilter) -> Void
+
+    init(
+        initialFilter: SavedPortFilter,
+        isNew: Bool,
+        onCancel: @escaping () -> Void,
+        onSave: @escaping (SavedPortFilter) -> Void
+    ) {
+        _filter = State(initialValue: initialFilter)
+        _minimumPortText = State(initialValue: initialFilter.minimumPort.map(String.init) ?? "")
+        _maximumPortText = State(initialValue: initialFilter.maximumPort.map(String.init) ?? "")
+        self.isNew = isNew
+        self.onCancel = onCancel
+        self.onSave = onSave
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            navigationHeader
+            Divider()
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    VStack(alignment: .leading, spacing: 7) {
+                        Text(L10n.filterNameLabel)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        TextField(L10n.filterNameLabel, text: $filter.name)
+                            .textFieldStyle(.roundedBorder)
+                    }
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(L10n.filterCategories)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+
+                        LazyVGrid(
+                            columns: [GridItem(.flexible()), GridItem(.flexible())],
+                            alignment: .leading,
+                            spacing: 8
+                        ) {
+                            ForEach(PortCategory.allCases, id: \.self) { category in
+                                Toggle(
+                                    L10n.categoryName(category),
+                                    isOn: categoryBinding(category)
+                                )
+                                .toggleStyle(.checkbox)
+                            }
+                        }
+                    }
+
+                    VStack(spacing: 12) {
+                        rulePicker(
+                            title: L10n.filterOwnership,
+                            selection: $filter.ownership,
+                            values: PortOwnershipScope.allCases,
+                            name: L10n.ownershipName
+                        )
+                        rulePicker(
+                            title: L10n.filterTermination,
+                            selection: $filter.termination,
+                            values: PortTerminationScope.allCases,
+                            name: L10n.terminationName
+                        )
+                        rulePicker(
+                            title: L10n.filterExposure,
+                            selection: $filter.exposure,
+                            values: PortExposureScope.allCases,
+                            name: L10n.exposureName
+                        )
+                    }
+
+                    VStack(alignment: .leading, spacing: 7) {
+                        Text(L10n.filterProcessQuery)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        TextField(L10n.filterProcessQuery, text: $filter.processQuery)
+                            .textFieldStyle(.roundedBorder)
+                    }
+
+                    VStack(alignment: .leading, spacing: 7) {
+                        Text(L10n.filterPortRange)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        HStack {
+                            TextField(L10n.filterMinimumPort, text: $minimumPortText)
+                            Text("–")
+                                .foregroundStyle(.secondary)
+                            TextField(L10n.filterMaximumPort, text: $maximumPortText)
+                        }
+                        .textFieldStyle(.roundedBorder)
+                    }
+
+                    Toggle(L10n.filterPinned, isOn: $filter.isPinned)
+                        .toggleStyle(.checkbox)
+                }
+                .padding(16)
+            }
+        }
+    }
+
+    private var navigationHeader: some View {
+        HStack {
+            Button(L10n.cancel, action: onCancel)
+                .buttonStyle(.borderless)
+
+            Spacer()
+            Text(isNew ? L10n.newFilter : L10n.editFilter)
+                .font(.headline)
+            Spacer()
+
+            Button(L10n.save) {
+                filter.minimumPort = Int(minimumPortText)
+                filter.maximumPort = Int(maximumPortText)
+                onSave(filter)
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.small)
+            .disabled(!isValid)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+    }
+
+    private var isValid: Bool {
+        !filter.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && isValidPortText(minimumPortText)
+            && isValidPortText(maximumPortText)
+            && portRangeIsOrdered
+    }
+
+    private var portRangeIsOrdered: Bool {
+        guard let minimum = Int(minimumPortText),
+              let maximum = Int(maximumPortText) else {
+            return true
+        }
+
+        return minimum <= maximum
+    }
+
+    private func isValidPortText(_ text: String) -> Bool {
+        text.isEmpty || Int(text).map { (1...65_535).contains($0) } == true
+    }
+
+    private func categoryBinding(_ category: PortCategory) -> Binding<Bool> {
+        Binding(
+            get: { filter.categories.contains(category) },
+            set: { isSelected in
+                if isSelected {
+                    filter.categories.insert(category)
+                } else {
+                    filter.categories.remove(category)
+                }
+            }
+        )
+    }
+
+    private func rulePicker<Value: Hashable>(
+        title: String,
+        selection: Binding<Value>,
+        values: [Value],
+        name: @escaping (Value) -> String
+    ) -> some View {
+        HStack {
+            Text(title)
+            Spacer()
+            Picker(title, selection: selection) {
+                ForEach(values, id: \.self) { value in
+                    Text(name(value)).tag(value)
+                }
+            }
+            .labelsHidden()
+            .frame(width: 170)
+        }
     }
 }
 

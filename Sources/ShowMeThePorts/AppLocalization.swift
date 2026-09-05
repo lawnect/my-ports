@@ -30,6 +30,9 @@ enum L10n {
     static var noWebPorts: String { string("empty.no_web_ports") }
     static var noDevelopmentPorts: String { string("empty.no_development_ports") }
     static var noListeningPorts: String { string("empty.no_listening_ports") }
+    static var noFilterMatches: String {
+        string("empty.no_filter_matches", fallback: "No ports match this filter")
+    }
     static var launchAtLogin: String { string("setting.launch_at_login") }
     static var launchAtLoginRequiresApproval: String {
         string("status.launch_at_login_requires_approval")
@@ -37,12 +40,56 @@ enum L10n {
     static var terminateProcessTitle: String { string("confirmation.kill.title") }
     static var protectedProcessTitle: String { string("protected.title") }
 
-    static func filterName(_ mode: PortFilterMode) -> String {
-        switch mode {
-        case .web: string("filter.web")
-        case .development: string("filter.development")
-        case .all: string("filter.all")
-        }
+    static var allFilter: String { string("filter.all") }
+    static var filters: String { string("filters.title", fallback: "Filters") }
+    static var newFilter: String { string("filters.new", fallback: "New Filter") }
+    static var editFilter: String { string("filters.edit", fallback: "Edit Filter") }
+    static var save: String { string("action.save", fallback: "Save") }
+    static var delete: String { string("action.delete", fallback: "Delete") }
+    static var back: String { string("action.back", fallback: "Back") }
+    static var pin: String { string("action.pin", fallback: "Pin") }
+    static var unpin: String { string("action.unpin", fallback: "Unpin") }
+    static var filterNameLabel: String { string("filters.field.name", fallback: "Name") }
+    static var filterCategories: String { string("filters.field.categories", fallback: "Categories") }
+    static var filterAnyCategories: String {
+        string("filters.categories.any", fallback: "Any category")
+    }
+    static var filterOwnership: String { string("filters.field.ownership", fallback: "Owner") }
+    static var filterTermination: String { string("filters.field.termination", fallback: "Termination") }
+    static var filterExposure: String { string("filters.field.exposure", fallback: "Exposure") }
+    static var filterProcessQuery: String { string("filters.field.process", fallback: "Process or app contains") }
+    static var filterPortRange: String { string("filters.field.port_range", fallback: "Port range") }
+    static var filterMinimumPort: String { string("filters.field.minimum_port", fallback: "From") }
+    static var filterMaximumPort: String { string("filters.field.maximum_port", fallback: "To") }
+    static var filterPinned: String { string("filters.field.pinned", fallback: "Show in the top bar") }
+    static var filterPinLimit: String {
+        string("filters.pin_limit", fallback: "Up to two saved filters appear in the top bar.")
+    }
+    static var noSavedFilters: String {
+        string("filters.empty", fallback: "No saved filters")
+    }
+    static var deleteFilterTitle: String {
+        string("filters.delete.title", fallback: "Delete Filter?")
+    }
+
+    static func deleteFilterMessage(_ name: String) -> String {
+        format("filters.delete.message", fallback: "Delete “%@”?", name)
+    }
+
+    static func categoryName(_ category: PortCategory) -> String {
+        string("filters.category.\(category.rawValue)", fallback: category.rawValue.capitalized)
+    }
+
+    static func ownershipName(_ scope: PortOwnershipScope) -> String {
+        string("filters.ownership.\(scope.rawValue)", fallback: scope.rawValue)
+    }
+
+    static func terminationName(_ scope: PortTerminationScope) -> String {
+        string("filters.termination.\(scope.rawValue)", fallback: scope.rawValue)
+    }
+
+    static func exposureName(_ scope: PortExposureScope) -> String {
+        string("filters.exposure.\(scope.rawValue)", fallback: scope.rawValue)
     }
 
     static func updated(at time: String) -> String {
@@ -135,6 +182,18 @@ enum L10n {
     static func format(_ key: String, _ arguments: CVarArg...) -> String {
         String(
             format: string(key),
+            locale: Locale.current,
+            arguments: arguments
+        )
+    }
+
+    static func format(
+        _ key: String,
+        fallback: String,
+        _ arguments: CVarArg...
+    ) -> String {
+        String(
+            format: string(key, fallback: fallback),
             locale: Locale.current,
             arguments: arguments
         )

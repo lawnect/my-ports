@@ -16,8 +16,16 @@ ICON_OUTPUT_DIR := .build/app-icon
 ICON_FILE := $(ICON_OUTPUT_DIR)/$(ICON_NAME).icns
 ICON_ASSETS := $(ICON_OUTPUT_DIR)/Assets.car
 ICON_INFO := $(ICON_OUTPUT_DIR)/Info.plist
+VERSION := $(shell /usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" Resources/Info.plist)
+RELEASE_DIR := .build/release
+ARCHIVE_PATH := $(RELEASE_DIR)/$(APP_NAME).xcarchive
+ARCHIVE_APP := $(ARCHIVE_PATH)/Products/Applications/$(APP_NAME).app
+RELEASE_ZIP := $(RELEASE_DIR)/$(APP_NAME)-v$(VERSION).zip
+DEVELOPER_ID_APPLICATION ?= Developer ID Application: JEONGWOONG PARK (XG3NG7VPSQ)
+DEVELOPER_TEAM_ID ?= XG3NG7VPSQ
+NOTARY_PROFILE ?= portpig
 
-.PHONY: build test run icons bundle dist install launch uninstall clean
+.PHONY: build test run icons bundle dist install launch uninstall release-archive release-package release publish clean
 
 build:
 	swift build --product $(BINARY_NAME)
@@ -83,6 +91,48 @@ uninstall:
 	rm -rf "$(INSTALLED_APP)"
 	rm -rf "$(OLD_INSTALLED_APP)"
 	rm -rf "$(LEGACY_INSTALLED_APP)"
+
+release-archive: test
+	rm -rf "$(ARCHIVE_PATH)"
+	mkdir -p "$(RELEASE_DIR)"
+	xcodebuild archive \
+		-project PortPig.xcodeproj \
+		-scheme PortPig \
+		-configuration Release \
+		-destination "generic/platform=macOS" \
+		-archivePath "$(ARCHIVE_PATH)" \
+		CODE_SIGN_STYLE=Manual \
+		CODE_SIGN_IDENTITY="$(DEVELOPER_ID_APPLICATION)" \
+		DEVELOPMENT_TEAM="$(DEVELOPER_TEAM_ID)" \
+		OTHER_CODE_SIGN_FLAGS="--timestamp"
+	file "$(ARCHIVE_APP)/Contents/MacOS/$(BINARY_NAME)"
+	codesign --verify --deep --strict --verbose=2 "$(ARCHIVE_APP)"
+	@test "$$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$(ARCHIVE_APP)/Contents/Info.plist")" = "$(VERSION)" || (echo "Xcode and Resources/Info.plist versions do not match."; exit 1)
+
+release-package: release-archive
+	rm -f "$(RELEASE_ZIP)"
+	ditto -c -k --sequesterRsrc --keepParent "$(ARCHIVE_APP)" "$(RELEASE_ZIP)"
+
+release: release-package
+	xcrun notarytool submit "$(RELEASE_ZIP)" --keychain-profile "$(NOTARY_PROFILE)" --wait
+	xcrun stapler staple "$(ARCHIVE_APP)"
+	xcrun stapler validate "$(ARCHIVE_APP)"
+	rm -f "$(RELEASE_ZIP)"
+	ditto -c -k --sequesterRsrc --keepParent "$(ARCHIVE_APP)" "$(RELEASE_ZIP)"
+	codesign --verify --deep --strict --verbose=2 "$(ARCHIVE_APP)"
+	spctl --assess --type execute --verbose=2 "$(ARCHIVE_APP)"
+	shasum -a 256 "$(RELEASE_ZIP)"
+
+publish: release
+	@test -z "$$(git status --porcelain)" || (echo "Commit the working tree before publishing."; exit 1)
+	git fetch origin main
+	@test "$$(git rev-parse HEAD)" = "$$(git rev-parse origin/main)" || (echo "Push the current commit to origin/main before publishing."; exit 1)
+	@test -z "$$(git tag --list "v$(VERSION)")" || (echo "Tag v$(VERSION) already exists."; exit 1)
+	gh release create "v$(VERSION)" "$(RELEASE_ZIP)#$(APP_NAME) $(VERSION)" \
+		--repo lawnect/portpig \
+		--target main \
+		--title "$(APP_NAME) $(VERSION)" \
+		--generate-notes
 
 clean:
 	rm -rf .build dist

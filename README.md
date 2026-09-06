@@ -6,9 +6,23 @@ ports and killing the owning process.
 ## Requirements
 
 - macOS 13 or later
-- Xcode command line tools with Swift 6 or later
+
+## Install with Homebrew
+
+```sh
+brew install --cask lawnect/tap/portpig
+```
+
+To upgrade or remove PortPig later:
+
+```sh
+brew upgrade --cask portpig
+brew uninstall --cask portpig
+```
 
 ## Development
+
+Development requires Xcode command line tools with Swift 6 or later.
 
 ```sh
 make build
@@ -72,6 +86,26 @@ make dist
 ```
 
 This writes `dist/PortPig.app`. Remove it after use if you do not want Spotlight to show a duplicate app.
+
+## Release
+
+Release archives are universal macOS apps signed with Developer ID and notarized
+by Apple. The notarization credential is read from the `portpig` keychain profile.
+
+Register that credential once, using an app-specific password for the Apple ID:
+
+```sh
+xcrun notarytool store-credentials "portpig" --team-id "XG3NG7VPSQ"
+```
+
+Then build, notarize, staple, verify, and publish the current version:
+
+```sh
+make publish
+```
+
+The version comes from `Resources/Info.plist`. `make publish` requires a clean
+working tree whose current commit is already pushed to `origin/main`.
 
 ## Install As An App
 

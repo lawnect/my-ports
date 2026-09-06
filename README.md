@@ -98,3 +98,9 @@ make launch
 - Bundled application paths and process ancestry distinguish Dia, Serena, Codex, Zed, Figma, Tailscale, VS Code, and Cursor helpers; installed application icons are used when available.
 - Process termination uses `/bin/kill -9 <PID>` only for verified processes owned by the current user. Administrator, other-user, macOS, and unknown-owner processes are protected in the UI.
 - The UI is an `NSStatusBar` item backed by an `NSPopover` with SwiftUI content.
+
+## License
+
+My Ports is available under the [MIT License](LICENSE). Third-party service
+logos remain subject to the terms and trademark guidelines documented in
+[`ATTRIBUTION.md`](Sources/ShowMeThePorts/Resources/ServiceIcons/ATTRIBUTION.md).

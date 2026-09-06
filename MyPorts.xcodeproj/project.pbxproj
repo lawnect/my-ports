@@ -19,6 +19,7 @@
 		B1000000000000000000000A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = V10000000000000000000001 /* Localizable.strings */; };
 		B1000000000000000000000B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = V10000000000000000000002 /* InfoPlist.strings */; };
 		B1000000000000000000000C /* LaunchAtLoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000008 /* LaunchAtLoginController.swift */; };
+		B1000000000000000000000D /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = F60000000000000000000001 /* LICENSE */; };
 		B20000000000000000000001 /* DevelopmentPortFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000001 /* DevelopmentPortFilter.swift */; };
 		B20000000000000000000002 /* LsofPortScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000002 /* LsofPortScanner.swift */; };
 		B20000000000000000000003 /* PortClassification.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000003 /* PortClassification.swift */; };
@@ -97,6 +98,7 @@
 		F50000000000000000000012 /* ru */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ru; path = Resources/ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F50000000000000000000013 /* hi */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = hi; path = Resources/hi.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F50000000000000000000014 /* ar */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ar; path = Resources/ar.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F60000000000000000000001 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +134,7 @@
 				D000000000000000000000004 /* Sources */,
 				D000000000000000000000007 /* Tests/ShowMeThePortsCoreTests */,
 				D000000000000000000000008 /* Resources */,
+				F60000000000000000000001 /* LICENSE */,
 				D000000000000000000000003 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -319,6 +322,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B10000000000000000000005 /* AppIcon.icon in Resources */,
+				B1000000000000000000000D /* LICENSE in Resources */,
 				B10000000000000000000006 /* Resources/ServiceIcons in Resources */,
 				B1000000000000000000000A /* Localizable.strings in Resources */,
 				B1000000000000000000000B /* InfoPlist.strings in Resources */,

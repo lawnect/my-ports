@@ -49,6 +49,7 @@ bundle: icons
 	cp Resources/Info.plist "$(APP_BUNDLE)/Contents/Info.plist"
 	cp "$(ICON_FILE)" "$(APP_BUNDLE)/Contents/Resources/$(ICON_NAME).icns"
 	cp "$(ICON_ASSETS)" "$(APP_BUNDLE)/Contents/Resources/Assets.car"
+	cp LICENSE "$(APP_BUNDLE)/Contents/Resources/LICENSE.txt"
 	@if [ -d "$$(swift build -c release --show-bin-path)/ShowMeThePorts_ShowMeThePorts.bundle" ]; then \
 		cp -R "$$(swift build -c release --show-bin-path)/ShowMeThePorts_ShowMeThePorts.bundle" "$(APP_BUNDLE)/Contents/Resources/"; \
 	fi

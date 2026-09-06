@@ -1,6 +1,7 @@
-# My Ports
+# PortPig
 
-A lightweight macOS menu bar app for checking local listening TCP ports and killing the owning process.
+PortPig is a lightweight macOS menu bar app for checking local listening TCP
+ports and killing the owning process.
 
 ## Requirements
 
@@ -22,14 +23,14 @@ make run
 Open the direct-distribution macOS app project:
 
 ```sh
-open MyPorts.xcodeproj
+open PortPig.xcodeproj
 ```
 
-Select the `My Ports` scheme and `My Mac`, then use Run or Test normally. The
+Select the `PortPig` scheme and `My Mac`, then use Run or Test normally. The
 project keeps App Sandbox disabled because the app needs to inspect and terminate
 local processes, and enables Hardened Runtime for Developer ID distribution.
 
-Before creating a distributable archive, select the `My Ports` target, open
+Before creating a distributable archive, select the `PortPig` target, open
 Signing & Capabilities, choose your Apple Developer team, and confirm the bundle
 identifier. Then choose Product > Archive and, in Organizer, use Distribute App >
 Developer ID. Xcode can upload the archive for notarization and export the signed
@@ -48,7 +49,7 @@ and pnpm are not required to build or run the macOS app.
 `caddy.svg`, `elixir.svg`, `rails.svg`, and `rust.svg` remain sourced from
 [Simple Icons](https://simpleicons.org/) because the SVG Logos alternatives are
 missing or unsuitable at the app's 22-point display size. See
-[`ATTRIBUTION.md`](Sources/ShowMeThePorts/Resources/ServiceIcons/ATTRIBUTION.md)
+[`ATTRIBUTION.md`](Sources/PortPig/Resources/ServiceIcons/ATTRIBUTION.md)
 for details. Individual logos remain subject to their owners' trademark and brand
 guidelines.
 
@@ -56,7 +57,7 @@ guidelines.
 
 ```sh
 make bundle
-open ".build/app/My Ports.app"
+open ".build/app/PortPig.app"
 ```
 
 The bundle uses `LSUIElement=true`, so the app runs without a Dock icon.
@@ -70,13 +71,13 @@ To create a visible distributable copy:
 make dist
 ```
 
-This writes `dist/My Ports.app`. Remove it after use if you do not want Spotlight to show a duplicate app.
+This writes `dist/PortPig.app`. Remove it after use if you do not want Spotlight to show a duplicate app.
 
 ## Install As An App
 
 ```sh
 make install
-open "$HOME/Applications/My Ports.app"
+open "$HOME/Applications/PortPig.app"
 ```
 
 After installation, open it from `~/Applications`, Finder, Spotlight, or Launchpad.
@@ -101,6 +102,6 @@ make launch
 
 ## License
 
-My Ports is available under the [MIT License](LICENSE). Third-party service
+PortPig is available under the [MIT License](LICENSE). Third-party service
 logos remain subject to the terms and trademark guidelines documented in
-[`ATTRIBUTION.md`](Sources/ShowMeThePorts/Resources/ServiceIcons/ATTRIBUTION.md).
+[`ATTRIBUTION.md`](Sources/PortPig/Resources/ServiceIcons/ATTRIBUTION.md).

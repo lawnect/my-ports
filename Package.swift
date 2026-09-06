@@ -3,25 +3,25 @@
 import PackageDescription
 
 let package = Package(
-    name: "ShowMeThePorts",
+    name: "PortPig",
     defaultLocalization: "en",
     platforms: [
         .macOS(.v13)
     ],
     products: [
-        .executable(name: "ShowMeThePorts", targets: ["ShowMeThePorts"]),
-        .library(name: "ShowMeThePortsCore", targets: ["ShowMeThePortsCore"])
+        .executable(name: "PortPig", targets: ["PortPig"]),
+        .library(name: "PortPigCore", targets: ["PortPigCore"])
     ],
     targets: [
-        .target(name: "ShowMeThePortsCore"),
+        .target(name: "PortPigCore"),
         .executableTarget(
-            name: "ShowMeThePorts",
-            dependencies: ["ShowMeThePortsCore"],
+            name: "PortPig",
+            dependencies: ["PortPigCore"],
             resources: [.process("Resources")]
         ),
         .testTarget(
-            name: "ShowMeThePortsCoreTests",
-            dependencies: ["ShowMeThePortsCore"]
+            name: "PortPigCoreTests",
+            dependencies: ["PortPigCore"]
         )
     ]
 )

@@ -21,8 +21,8 @@ RELEASE_DIR := .build/release
 ARCHIVE_PATH := $(RELEASE_DIR)/$(APP_NAME).xcarchive
 ARCHIVE_APP := $(ARCHIVE_PATH)/Products/Applications/$(APP_NAME).app
 RELEASE_ZIP := $(RELEASE_DIR)/$(APP_NAME)-v$(VERSION).zip
-DEVELOPER_ID_APPLICATION ?= Developer ID Application: JEONGWOONG PARK (XG3NG7VPSQ)
-DEVELOPER_TEAM_ID ?= XG3NG7VPSQ
+DEVELOPER_ID_APPLICATION ?= Developer ID Application
+DEVELOPER_TEAM_ID ?=
 NOTARY_PROFILE ?= portpig
 
 .PHONY: build test run icons bundle dist install launch uninstall release-archive release-package release publish clean
@@ -93,6 +93,7 @@ uninstall:
 	rm -rf "$(LEGACY_INSTALLED_APP)"
 
 release-archive: test
+	@test -n "$(DEVELOPER_TEAM_ID)" || (echo "Set DEVELOPER_TEAM_ID to the Apple Developer Team ID used for this release."; exit 1)
 	rm -rf "$(ARCHIVE_PATH)"
 	mkdir -p "$(RELEASE_DIR)"
 	xcodebuild archive \

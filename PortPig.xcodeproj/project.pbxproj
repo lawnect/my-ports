@@ -567,7 +567,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 0.3.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.lawnect.myports.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lawnect.portpig;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
@@ -593,7 +593,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 0.3.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.lawnect.myports.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lawnect.portpig;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;

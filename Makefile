@@ -20,9 +20,11 @@ VERSION := $(shell /usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString
 RELEASE_DIR := .build/release
 ARCHIVE_PATH := $(RELEASE_DIR)/$(APP_NAME).xcarchive
 ARCHIVE_APP := $(ARCHIVE_PATH)/Products/Applications/$(APP_NAME).app
+EXPORT_DIR := $(RELEASE_DIR)/export
+EXPORTED_APP := $(EXPORT_DIR)/$(APP_NAME).app
+EXPORT_OPTIONS := Resources/ExportOptions.plist
 RELEASE_ZIP := $(RELEASE_DIR)/$(APP_NAME)-v$(VERSION).zip
-DEVELOPER_ID_APPLICATION ?= Developer ID Application
-DEVELOPER_TEAM_ID ?=
+DEVELOPER_TEAM_ID ?= K8R5WLB763
 NOTARY_PROFILE ?= portpig
 
 .PHONY: build test run icons bundle dist install launch uninstall release-archive release-package release publish clean
@@ -93,7 +95,6 @@ uninstall:
 	rm -rf "$(LEGACY_INSTALLED_APP)"
 
 release-archive: test
-	@test -n "$(DEVELOPER_TEAM_ID)" || (echo "Set DEVELOPER_TEAM_ID to the Apple Developer Team ID used for this release."; exit 1)
 	rm -rf "$(ARCHIVE_PATH)"
 	mkdir -p "$(RELEASE_DIR)"
 	xcodebuild archive \
@@ -102,26 +103,34 @@ release-archive: test
 		-configuration Release \
 		-destination "generic/platform=macOS" \
 		-archivePath "$(ARCHIVE_PATH)" \
-		CODE_SIGN_STYLE=Manual \
-		CODE_SIGN_IDENTITY="$(DEVELOPER_ID_APPLICATION)" \
-		DEVELOPMENT_TEAM="$(DEVELOPER_TEAM_ID)" \
-		OTHER_CODE_SIGN_FLAGS="--timestamp"
+		-allowProvisioningUpdates \
+		CODE_SIGN_STYLE=Automatic \
+		DEVELOPMENT_TEAM="$(DEVELOPER_TEAM_ID)"
 	file "$(ARCHIVE_APP)/Contents/MacOS/$(BINARY_NAME)"
 	codesign --verify --deep --strict --verbose=2 "$(ARCHIVE_APP)"
 	@test "$$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$(ARCHIVE_APP)/Contents/Info.plist")" = "$(VERSION)" || (echo "Xcode and Resources/Info.plist versions do not match."; exit 1)
 
 release-package: release-archive
+	rm -rf "$(EXPORT_DIR)"
+	xcodebuild -exportArchive \
+		-archivePath "$(ARCHIVE_PATH)" \
+		-exportPath "$(EXPORT_DIR)" \
+		-exportOptionsPlist "$(EXPORT_OPTIONS)" \
+		-allowProvisioningUpdates
+	file "$(EXPORTED_APP)/Contents/MacOS/$(BINARY_NAME)"
+	codesign --verify --deep --strict --verbose=2 "$(EXPORTED_APP)"
+	@codesign -dvv "$(EXPORTED_APP)" 2>&1 | rg -q '^Authority=Developer ID Application:' || (echo "The exported app is not signed with Developer ID."; exit 1)
 	rm -f "$(RELEASE_ZIP)"
-	ditto -c -k --sequesterRsrc --keepParent "$(ARCHIVE_APP)" "$(RELEASE_ZIP)"
+	ditto -c -k --sequesterRsrc --keepParent "$(EXPORTED_APP)" "$(RELEASE_ZIP)"
 
 release: release-package
 	xcrun notarytool submit "$(RELEASE_ZIP)" --keychain-profile "$(NOTARY_PROFILE)" --wait
-	xcrun stapler staple "$(ARCHIVE_APP)"
-	xcrun stapler validate "$(ARCHIVE_APP)"
+	xcrun stapler staple "$(EXPORTED_APP)"
+	xcrun stapler validate "$(EXPORTED_APP)"
 	rm -f "$(RELEASE_ZIP)"
-	ditto -c -k --sequesterRsrc --keepParent "$(ARCHIVE_APP)" "$(RELEASE_ZIP)"
-	codesign --verify --deep --strict --verbose=2 "$(ARCHIVE_APP)"
-	spctl --assess --type execute --verbose=2 "$(ARCHIVE_APP)"
+	ditto -c -k --sequesterRsrc --keepParent "$(EXPORTED_APP)" "$(RELEASE_ZIP)"
+	codesign --verify --deep --strict --verbose=2 "$(EXPORTED_APP)"
+	spctl --assess --type execute --verbose=2 "$(EXPORTED_APP)"
 	shasum -a 256 "$(RELEASE_ZIP)"
 
 publish: release

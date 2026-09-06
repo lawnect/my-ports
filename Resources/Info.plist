@@ -9,7 +9,7 @@
     <key>CFBundleExecutable</key>
     <string>PortPig</string>
     <key>CFBundleIdentifier</key>
-    <string>com.lawnect.myports.app</string>
+    <string>com.lawnect.portpig</string>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>CFBundleIconName</key>

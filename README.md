@@ -89,20 +89,21 @@ This writes `dist/PortPig.app`. Remove it after use if you do not want Spotlight
 
 ## Release
 
-Release archives are universal macOS apps signed with Developer ID and notarized
-by Apple. The notarization credential is read from the `portpig` keychain profile.
+Release archives are universal macOS apps signed by Xcode with Lawnnect's
+cloud-managed Developer ID certificate and notarized by Apple. The notarization
+credential is read from the `portpig` keychain profile.
 
 Register that credential once, using the new account's Apple Developer Team ID
 and an app-specific password for its Apple ID:
 
 ```sh
-xcrun notarytool store-credentials "portpig" --team-id "YOUR_TEAM_ID"
+xcrun notarytool store-credentials "portpig" --team-id "K8R5WLB763"
 ```
 
 Then build, notarize, staple, verify, and publish the current version:
 
 ```sh
-make publish DEVELOPER_TEAM_ID="YOUR_TEAM_ID"
+make publish
 ```
 
 The version comes from `Resources/Info.plist`. `make publish` requires a clean

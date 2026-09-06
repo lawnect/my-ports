@@ -53,6 +53,7 @@ bundle: icons
 		cp -R "$$(swift build -c release --show-bin-path)/ShowMeThePorts_ShowMeThePorts.bundle" "$(APP_BUNDLE)/Contents/Resources/"; \
 	fi
 	chmod +x "$(APP_BUNDLE)/Contents/MacOS/$(BINARY_NAME)"
+	codesign --force --sign - "$(APP_BUNDLE)"
 
 dist: bundle
 	rm -rf "$(DIST_APP_BUNDLE)"

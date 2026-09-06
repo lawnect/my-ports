@@ -60,9 +60,9 @@ open ".build/app/My Ports.app"
 ```
 
 The bundle uses `LSUIElement=true`, so the app runs without a Dock icon.
-The Xcode project uses `Resources/AppIcon.icon` as its Icon Composer source. The
-legacy `make bundle` path uses `Resources/AppIcon.png`; re-render it with
-`make render-icon`, then build `Resources/AppIcon.icns` with `make icons`.
+Both the Xcode project and the `make bundle` path compile
+`Resources/AppIcon.icon` with Apple's asset compiler. This places the generated
+`AppIcon.icns` and `Assets.car` in the application bundle.
 
 To create a visible distributable copy:
 

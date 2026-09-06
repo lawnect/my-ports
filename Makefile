@@ -8,12 +8,13 @@ INSTALLED_APP := $(INSTALL_DIR)/$(APP_NAME).app
 OLD_INSTALLED_APP := $(INSTALL_DIR)/$(OLD_APP_NAME).app
 OLD_DIST_APP_BUNDLE := dist/$(OLD_APP_NAME).app
 ICON_NAME := AppIcon
-ICON_SOURCE := Resources/$(ICON_NAME).png
-ICON_FILE := Resources/$(ICON_NAME).icns
-ICONSET := Resources/$(ICON_NAME).iconset
-ICON_RENDERER := Scripts/render_app_icon.swift
+ICON_SOURCE := Resources/$(ICON_NAME).icon
+ICON_OUTPUT_DIR := .build/app-icon
+ICON_FILE := $(ICON_OUTPUT_DIR)/$(ICON_NAME).icns
+ICON_ASSETS := $(ICON_OUTPUT_DIR)/Assets.car
+ICON_INFO := $(ICON_OUTPUT_DIR)/Info.plist
 
-.PHONY: build test run render-icon icons bundle dist install launch uninstall clean
+.PHONY: build test run icons bundle dist install launch uninstall clean
 
 build:
 	swift build --product $(BINARY_NAME)
@@ -24,28 +25,22 @@ test:
 run:
 	swift run $(BINARY_NAME)
 
-render-icon:
-	swift "$(ICON_RENDERER)" "$(ICON_SOURCE)"
+icons:
+	mkdir -p "$(ICON_OUTPUT_DIR)"
+	xcrun actool "$(ICON_SOURCE)" \
+		--compile "$(ICON_OUTPUT_DIR)" \
+		--output-format human-readable-text \
+		--notices \
+		--warnings \
+		--output-partial-info-plist "$(ICON_INFO)" \
+		--app-icon "$(ICON_NAME)" \
+		--enable-on-demand-resources NO \
+		--development-region en \
+		--target-device mac \
+		--minimum-deployment-target 13.0 \
+		--platform macosx
 
-icons: $(ICON_FILE)
-
-$(ICON_FILE): $(ICON_SOURCE) $(ICON_RENDERER)
-	rm -rf "$(ICONSET)"
-	mkdir -p "$(ICONSET)"
-	sips -z 16 16 "$(ICON_SOURCE)" --out "$(ICONSET)/icon_16x16.png" >/dev/null
-	sips -z 32 32 "$(ICON_SOURCE)" --out "$(ICONSET)/icon_16x16@2x.png" >/dev/null
-	sips -z 32 32 "$(ICON_SOURCE)" --out "$(ICONSET)/icon_32x32.png" >/dev/null
-	sips -z 64 64 "$(ICON_SOURCE)" --out "$(ICONSET)/icon_32x32@2x.png" >/dev/null
-	sips -z 128 128 "$(ICON_SOURCE)" --out "$(ICONSET)/icon_128x128.png" >/dev/null
-	sips -z 256 256 "$(ICON_SOURCE)" --out "$(ICONSET)/icon_128x128@2x.png" >/dev/null
-	sips -z 256 256 "$(ICON_SOURCE)" --out "$(ICONSET)/icon_256x256.png" >/dev/null
-	sips -z 512 512 "$(ICON_SOURCE)" --out "$(ICONSET)/icon_256x256@2x.png" >/dev/null
-	sips -z 512 512 "$(ICON_SOURCE)" --out "$(ICONSET)/icon_512x512.png" >/dev/null
-	sips -z 1024 1024 "$(ICON_SOURCE)" --out "$(ICONSET)/icon_512x512@2x.png" >/dev/null
-	iconutil -c icns "$(ICONSET)" -o "$(ICON_FILE)"
-	rm -rf "$(ICONSET)"
-
-bundle: $(ICON_FILE)
+bundle: icons
 	swift build -c release --product $(BINARY_NAME)
 	rm -rf "$(APP_BUNDLE)"
 	mkdir -p "$(APP_BUNDLE)/Contents/MacOS"
@@ -53,6 +48,7 @@ bundle: $(ICON_FILE)
 	cp "$$(swift build -c release --show-bin-path)/$(BINARY_NAME)" "$(APP_BUNDLE)/Contents/MacOS/$(BINARY_NAME)"
 	cp Resources/Info.plist "$(APP_BUNDLE)/Contents/Info.plist"
 	cp "$(ICON_FILE)" "$(APP_BUNDLE)/Contents/Resources/$(ICON_NAME).icns"
+	cp "$(ICON_ASSETS)" "$(APP_BUNDLE)/Contents/Resources/Assets.car"
 	@if [ -d "$$(swift build -c release --show-bin-path)/ShowMeThePorts_ShowMeThePorts.bundle" ]; then \
 		cp -R "$$(swift build -c release --show-bin-path)/ShowMeThePorts_ShowMeThePorts.bundle" "$(APP_BUNDLE)/Contents/Resources/"; \
 	fi

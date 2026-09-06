@@ -10,7 +10,7 @@ ports and killing the owning process.
 ## Install with Homebrew
 
 ```sh
-brew install --cask lawnect/tap/portpig
+brew install --cask ebool/tap/portpig
 ```
 
 To upgrade or remove PortPig later:
